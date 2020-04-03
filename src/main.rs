@@ -10,8 +10,6 @@ use indexmap::IndexMap;
 
 #[derive(Deserialize)]
 struct Config {
-    test: String,
-
     packages: IndexMap<String, Package>
 }
 
@@ -19,6 +17,9 @@ struct Config {
 struct Package {
     name: String
 }
+
+
+
 
 
 
@@ -31,12 +32,13 @@ fn main() {
     let file = read_to_string("packages.toml").unwrap();
     let config: Config = toml::from_str(&file).unwrap();
 
-    println!("{:?}", config.test);
-    println!("{:?}", config.packages);
-
     if let Some(cmd) = matches.subcommand_name() {
         match cmd {
-            "test" => {
+            "cover" => {
+                for (_, package) in config.packages.into_iter() {
+                    println!("Found package: {}", package.name);
+                }
+
                 log!("<bright blue>Info</>: directory this was run in: {}", std::env::current_dir().unwrap().display());
                 log!("<bright green>Status</>: you just ran the <u>test</u> command");
             }
