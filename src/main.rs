@@ -1,5 +1,6 @@
 use git2::Repository;
 use clap::{ App, load_yaml };
+use paris::{ log };
 
 
 
@@ -12,8 +13,10 @@ fn main() {
 
     if let Some(cmd) = matches.subcommand_name() {
         match cmd {
-            "test" => println!("You just ran the test command!"),
-            _ => println!("Whatever you just ran was wrong!")
+            "test" => {
+                log!("<bright green>Status<//>: you just ran the <u>test</u> command");
+            }
+            _ => unreachable!()
         }
     };
 
