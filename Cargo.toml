@@ -9,3 +9,4 @@ edition = "2018"
 [dependencies]
 git2 = "0.13"
 toml = "0.4"
+clap = { git = "https://github.com/clap-rs/clap/", features = ["yaml"] }

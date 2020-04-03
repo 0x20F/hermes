@@ -1,0 +1,9 @@
+name: smoke
+version: "1.0"
+author: 0x20F <alexhexan22@gmail.com>
+about: Simple, fast, configurable plugin downloader for your shell
+subcommands:
+  - test:
+      about: Me testing how this works
+      version: "1.0"
+      author: lidl me
