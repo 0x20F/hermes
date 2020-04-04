@@ -1,24 +1,13 @@
+mod config;
+
+
+
 use git2::Repository;
 use clap::{ App, load_yaml };
 use paris::{ log };
-use serde::{ Deserialize };
 use std::fs::read_to_string;
-use indexmap::IndexMap;
 
-
-
-
-#[derive(Deserialize)]
-struct Config {
-    packages: IndexMap<String, Package>
-}
-
-#[derive(Debug, Deserialize)]
-struct Package {
-    name: String
-}
-
-
+use config::Config;
 
 
 
