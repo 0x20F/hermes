@@ -5,7 +5,6 @@ mod config;
 use git2::Repository;
 use clap::{App, SubCommand, Arg};
 use paris::{ log };
-use std::fs::{read_to_string, File};
 
 use config::Config;
 
@@ -39,15 +38,9 @@ fn main() {
             "packages.toml"
         };
 
-        println!("Config is {}", config);
         let config = Config::from(config);
 
-        /*let file = read_to_string("packages.toml").unwrap();
-        let config: Config = toml::from_str(&file).unwrap();
-
-        for (_, package) in config.packages.into_iter() {
-            println!("Found package: {}", package.name);
-        }*/
+        println!("{:?}", config);
 
         log!("<bright blue>Info</>: directory this was run in: {}", std::env::current_dir().unwrap().display());
         log!("<bright green>Status</>: you just ran the <u>test</u> command");
