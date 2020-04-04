@@ -9,6 +9,6 @@ pub struct Config {
 
 
 #[derive(Deserialize)]
-struct Package {
-    name: String
+pub struct Package {
+    pub name: String
 }
