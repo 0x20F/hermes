@@ -5,7 +5,7 @@ mod config;
 use git2::Repository;
 use clap::{App, SubCommand, Arg};
 use paris::{ log };
-use std::fs::read_to_string;
+use std::fs::{read_to_string, File};
 
 use config::Config;
 
@@ -32,6 +32,14 @@ fn main() {
 
     if let Some(ref matches) = matches.subcommand_matches("cover") {
         println!("{:?}", matches.value_of("config"));
+
+        let config = if matches.is_present("config") {
+            matches.value_of("config").unwrap()
+        } else {
+            "packages.toml"
+        };
+
+        println!("Config is {}", config);
 
         /*let file = read_to_string("packages.toml").unwrap();
         let config: Config = toml::from_str(&file).unwrap();
