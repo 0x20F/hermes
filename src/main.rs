@@ -3,7 +3,7 @@ mod config;
 
 
 use git2::Repository;
-use clap::{App, SubCommand, Arg};
+use clap::{App, Arg};
 use paris::{ log };
 
 use config::Config;
