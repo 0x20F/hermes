@@ -1,9 +1,0 @@
-name: smoke
-version: "1.0"
-author: 0x20F <alexhexan22@gmail.com>
-about: Simple, fast, configurable plugin downloader for your shell
-subcommands:
-  - cover:
-      about: Downloads all packages defined in packages.toml in the current directory
-      version: "1.0"
-      author: 0x20F <alexhexan22@gmail.com>
