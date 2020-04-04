@@ -40,6 +40,7 @@ fn main() {
         };
 
         println!("Config is {}", config);
+        let config = Config::from(config);
 
         /*let file = read_to_string("packages.toml").unwrap();
         let config: Config = toml::from_str(&file).unwrap();
