@@ -29,7 +29,7 @@ fn main() {
         ).get_matches();
 
 
-    if !matches.is_present("cover") || !matches.is_present("temp") {
+    if !matches.is_present("cover") && !matches.is_present("temp") {
         log!("You need to use either the <bright blue>cover</> or <bright blue>other</> commands");
         return;
     }
@@ -43,8 +43,11 @@ fn main() {
             "packages.toml"
         };
 
-        if let Some(c) = Config::from(config_path) {
+        if let Some(config) = Config::from(config_path) {
             // Start parsing somehow
+            for (name, package) in config.packages {
+                log!("<magenta>Found</>: {}<blue>@</>{}", name, package.git);
+            }
         } else {
             log!("<black><on bright red>No config file was found</>");
             return;
