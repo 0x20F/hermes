@@ -27,6 +27,11 @@ fn main() {
                         .value_name("FILE")
                         .help("Path to the config file")
                 )
+                .arg(
+                    Arg::with_name("override")
+                        .short('o')
+                        .help("Remove already downloaded repos and download fresh copies")
+                )
         ).get_matches();
 
 
@@ -48,7 +53,7 @@ fn main() {
             // Start parsing somehow
             for package in config.packages {
                 log!("\t<cyan>Cloning</>: {}", package.1.git);
-                Git::clone(package);
+                Git::clone(package, matches.is_present("override"));
             }
         } else {
             log!("<black><on bright red>No config file was found</>");
