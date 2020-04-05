@@ -11,7 +11,7 @@ impl Git {
             None => format!("repositories/{}", name)
         };
 
-        let url = package.git;
+        let url = format!("https://github.com/{}", package.git);
 
         // Remove the directory if it exists
         match std::fs::remove_dir_all(&output_dir) {

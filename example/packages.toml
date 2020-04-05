@@ -1,0 +1,6 @@
+[packages]
+highlights = { git = "zsh-users/zsh-syntax-highlighting", to = "magic/autoload" }
+
+[packages.oh-my-zsh]
+git = "robbyrussell/oh-my-zsh"
+to = "magic/autoload"
