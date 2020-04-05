@@ -1,12 +1,13 @@
 mod config;
+mod git;
 
 
 
-use git2::Repository;
 use clap::{App, Arg};
 use paris::{ log };
 
 use config::Config;
+use git::Git;
 
 
 
@@ -45,8 +46,9 @@ fn main() {
 
         if let Some(config) = Config::from(config_path) {
             // Start parsing somehow
-            for (name, package) in config.packages {
-                log!("<magenta>Found</>: {}<blue>@</>{}", name, package.git);
+            for package in config.packages {
+                log!("\t<cyan>Cloning</>: {}", package.1.git);
+                Git::clone(package);
             }
         } else {
             log!("<black><on bright red>No config file was found</>");
@@ -57,10 +59,4 @@ fn main() {
         log!("<bright blue>Info</>: directory this was run in: {}", std::env::current_dir().unwrap().display());
         log!("<bright green>Status</>: you just ran the <u>test</u> command");
     };
-
-    /*let url = "https://github.com/0x20F/logger";
-    match Repository::clone(url, "repositories/") {
-        Ok(repo) => repo,
-        Err(e) => panic!("Failed to clone repo: {}", e)
-    };*/
 }
