@@ -20,6 +20,7 @@ fn main() {
                 .about("Starts downloading everything")
                 .arg(
                     Arg::with_name("config")
+                        .short('c')
                         .long("config")
                         .takes_value(true)
                         .value_name("FILE")
@@ -28,19 +29,27 @@ fn main() {
         ).get_matches();
 
 
+    if !matches.is_present("cover") || !matches.is_present("temp") {
+        log!("You need to use either the <bright blue>cover</> or <bright blue>other</> commands");
+        return;
+    }
+
+
 
     if let Some(ref matches) = matches.subcommand_matches("cover") {
-        println!("{:?}", matches.value_of("config"));
-
-        let config = if matches.is_present("config") {
+        let config_path = if matches.is_present("config") {
             matches.value_of("config").unwrap()
         } else {
             "packages.toml"
         };
 
-        let config = Config::from(config);
+        if let Some(c) = Config::from(config_path) {
+            // Start parsing somehow
+        } else {
+            log!("<black><on bright red>No config file was found</>");
+            return;
+        }
 
-        println!("{:?}", config);
 
         log!("<bright blue>Info</>: directory this was run in: {}", std::env::current_dir().unwrap().display());
         log!("<bright green>Status</>: you just ran the <u>test</u> command");
