@@ -15,8 +15,8 @@ pub fn package(p: Package, fresh: bool) -> Result<(), String> {
         None => format!("repositories/{}", name)
     };
 
-    if let Some(url) = p.git {
-        git::clone(&url, &output_dir, fresh)?;
+    if let Some(repo) = p.github {
+        git::clone(&repo.url(), &output_dir, fresh)?;
     }
 
     if let Some(url) = p.remote {

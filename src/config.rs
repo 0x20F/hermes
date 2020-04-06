@@ -3,6 +3,14 @@ use indexmap::IndexMap;
 use std::fs::read_to_string;
 
 
+
+
+const GITHUB_HOST: &str = "https://github.com/";
+
+
+
+
+
 #[derive(Debug, Deserialize)]
 pub struct Config {
     pub packages: IndexMap<String, Package>
@@ -26,7 +34,7 @@ impl Config {
 #[derive(Debug, Deserialize)]
 pub struct Package {
     pub name: Option<String>,
-    pub git: Option<String>,
+    pub github: Option<GithubRepository>,
     pub remote: Option<String>,
     pub to: Option<String>
 }
@@ -35,5 +43,21 @@ pub struct Package {
 impl Package {
     pub fn set_name(&mut self, name: String) {
         self.name = Some(name);
+    }
+}
+
+
+
+
+#[derive(Debug, Deserialize)]
+pub struct GithubRepository {
+    username: String,
+    repository: String
+}
+
+
+impl GithubRepository {
+    pub fn url(&self) -> String {
+        format!("{}/{}/{}", GITHUB_HOST, self.username, self.repository)
     }
 }
