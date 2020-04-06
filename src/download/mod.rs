@@ -2,7 +2,6 @@ mod git;
 mod remote;
 
 use crate::config::Package;
-use crate::download::git::Git;
 
 
 
@@ -17,7 +16,7 @@ pub fn package(p: Package, fresh: bool) -> Result<(), String> {
     };
 
     if let Some(url) = p.git {
-        Git::clone(url, output_dir, fresh)?;
+        git::clone(url, output_dir, fresh)?;
     }
 
     Ok(())
