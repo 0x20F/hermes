@@ -31,12 +31,15 @@ fn main() -> Result<(), String> {
         ).get_matches();
 
 
+
+
     if !matches.is_present("cover") && !matches.is_present("temp") {
         let message = Formatter::colorize_string(
             "You need to use either the <bright blue>cover</> or <bright blue>other</> commands"
         );
         return Err(message);
     }
+
 
 
 

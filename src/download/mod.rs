@@ -16,7 +16,11 @@ pub fn package(p: Package, fresh: bool) -> Result<(), String> {
     };
 
     if let Some(url) = p.git {
-        git::clone(url, output_dir, fresh)?;
+        git::clone(&url, &output_dir, fresh)?;
+    }
+
+    if let Some(url) = p.remote {
+        remote::get(&url, &output_dir, fresh)?;
     }
 
     Ok(())

@@ -27,6 +27,7 @@ impl Config {
 pub struct Package {
     pub name: Option<String>,
     pub git: Option<String>,
+    pub remote: Option<String>,
     pub to: Option<String>
 }
 

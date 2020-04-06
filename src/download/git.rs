@@ -2,7 +2,7 @@ use git2::Repository;
 use std::path::Path;
 
 
-pub fn clone(url: String, out: String, fresh: bool) -> Result<(), String> {
+pub fn clone(url: &str, out: &str, fresh: bool) -> Result<(), String> {
     // TODO: Update this when using something outside of github
     let url = format!("https://github.com/{}", url);
 
