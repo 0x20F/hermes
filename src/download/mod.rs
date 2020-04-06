@@ -6,21 +6,19 @@ use crate::download::git::Git;
 
 
 
-pub struct Download {}
+pub fn package(p: Package, fresh: bool) -> Result<(), String> {
+    let name = p.name.unwrap();
 
-impl Download {
-    pub fn package(p: Package, fresh: bool) {
-        let name = p.name.unwrap();
+    // Check if package has git or remote
+    // Download accordingly
+    let output_dir = match p.to {
+        Some(path) => format!("{}/{}", path, name),
+        None => format!("repositories/{}", name)
+    };
 
-        // Check if package has git or remote
-        // Download accordingly
-        let output_dir = match p.to {
-            Some(path) => format!("{}/{}", path, name),
-            None => format!("repositories/{}", name)
-        };
-
-        if let Some(url) = p.git {
-            Git::clone(url, output_dir, fresh);
-        }
+    if let Some(url) = p.git {
+        Git::clone(url, output_dir, fresh)?;
     }
+
+    Ok(())
 }

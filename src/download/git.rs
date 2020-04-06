@@ -5,7 +5,7 @@ use std::path::Path;
 pub struct Git {}
 
 impl Git {
-    pub fn clone(url: String, out: String, fresh: bool) {
+    pub fn clone(url: String, out: String, fresh: bool) -> Result<(), String> {
         // TODO: Update this when using something outside of github
         let url = format!("https://github.com/{}", url);
 
@@ -20,9 +20,11 @@ impl Git {
             Ok(_) => (),
             Err(e) => {
                 if !Path::new(&out).exists() {
-                    panic!("Failed to clone repo: {}", e);
+                    return Err(format!("Failed to clone repo: {}", url));
                 }
             }
         };
+
+        Ok(())
     }
 }

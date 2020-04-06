@@ -4,13 +4,12 @@ mod download;
 
 
 use clap::{App, Arg};
-use paris::{ log };
+use paris::{ log, Formatter };
 
 use config::Config;
-use download::Download;
 
 
-fn main() {
+fn main() -> Result<(), String> {
 
     let matches = App::new("smoke")
         .subcommand(
@@ -33,8 +32,10 @@ fn main() {
 
 
     if !matches.is_present("cover") && !matches.is_present("temp") {
-        log!("You need to use either the <bright blue>cover</> or <bright blue>other</> commands");
-        return;
+        let message = Formatter::colorize_string(
+            "You need to use either the <bright blue>cover</> or <bright blue>other</> commands"
+        );
+        return Err(message);
     }
 
 
@@ -50,8 +51,10 @@ fn main() {
             // Start parsing somehow
             for (name, mut package) in config.packages {
                 package.set_name(name);
-                Download::package(package, matches.is_present("fresh"));
+                download::package(package, matches.is_present("fresh"))?;
             }
         }
     };
+
+    Ok(())
 }
