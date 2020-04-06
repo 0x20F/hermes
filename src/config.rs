@@ -22,9 +22,17 @@ impl Config {
 
 
 
+
 #[derive(Debug, Deserialize)]
 pub struct Package {
-    pub git: String,
-
+    pub name: Option<String>,
+    pub git: Option<String>,
     pub to: Option<String>
+}
+
+
+impl Package {
+    pub fn set_name(&mut self, name: String) {
+        self.name = Some(name);
+    }
 }

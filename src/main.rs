@@ -1,5 +1,5 @@
 mod config;
-mod git;
+mod download;
 
 
 
@@ -7,10 +7,7 @@ use clap::{App, Arg};
 use paris::{ log };
 
 use config::Config;
-use git::Git;
-
-
-
+use download::Download;
 
 
 fn main() {
@@ -28,8 +25,8 @@ fn main() {
                         .help("Path to the config file")
                 )
                 .arg(
-                    Arg::with_name("override")
-                        .short('o')
+                    Arg::with_name("fresh")
+                        .short('f')
                         .help("Remove already downloaded repos and download fresh copies")
                 )
         ).get_matches();
@@ -51,17 +48,10 @@ fn main() {
 
         if let Some(config) = Config::from(config_path) {
             // Start parsing somehow
-            for package in config.packages {
-                log!("\t<cyan>Cloning</>: {}", package.1.git);
-                Git::clone(package, matches.is_present("override"));
+            for (name, mut package) in config.packages {
+                package.set_name(name);
+                Download::package(package, matches.is_present("fresh"));
             }
-        } else {
-            log!("<black><on bright red>No config file was found</>");
-            return;
         }
-
-
-        log!("<bright blue>Info</>: directory this was run in: {}", std::env::current_dir().unwrap().display());
-        log!("<bright green>Status</>: you just ran the <u>test</u> command");
     };
 }
