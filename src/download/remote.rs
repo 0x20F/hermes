@@ -20,9 +20,6 @@ pub fn get(url: &str, out: &str, fresh: bool) -> Result<(), String> {
 
     if let Ok(text) = response.text() {
         // Save to file
-        println!("{}", text);
-        println!("path: {}", file_path);
-
         std::fs::create_dir_all(out);
         std::fs::write(file_path, text).unwrap();
     } else {
