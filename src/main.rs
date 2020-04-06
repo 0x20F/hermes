@@ -4,7 +4,7 @@ mod download;
 
 
 use clap::{App, Arg};
-use paris::{ log, Formatter };
+use paris::formatter::colorize_string;
 
 use config::Config;
 
@@ -34,7 +34,7 @@ fn main() -> Result<(), String> {
 
 
     if !matches.is_present("cover") && !matches.is_present("temp") {
-        let message = Formatter::colorize_string(
+        let message = colorize_string(
             "You need to use either the <bright blue>cover</> or <bright blue>other</> commands"
         );
         return Err(message);
