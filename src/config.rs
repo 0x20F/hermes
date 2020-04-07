@@ -32,7 +32,7 @@ pub struct Package {
     pub name: Option<String>,
     pub github: Option<Github>,
     pub remote: Option<String>,
-    pub out: Option<String>
+    pub out: Option<Out>
 }
 
 
@@ -56,4 +56,13 @@ impl Github {
     pub fn url(&self) -> String {
         format!("{}/{}/{}", GITHUB_HOST, self.username, self.repository)
     }
+}
+
+
+
+
+#[derive(Debug, Deserialize)]
+pub struct Out {
+    pub directory: Option<String>,
+    pub filename: Option<String>
 }

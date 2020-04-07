@@ -1,9 +1,7 @@
 use reqwest::blocking;
-use std::fs::File;
-use std::io::Write;
 
 
-pub fn get(url: &str, out: &str) -> Result<(), String> {
+pub fn get(url: &str, out: &str, filename: &str) -> Result<(), String> {
     let response = match blocking::get(url) {
         Ok(resp) => resp,
         Err(_) => {
@@ -13,14 +11,10 @@ pub fn get(url: &str, out: &str) -> Result<(), String> {
     };
 
 
-    let pieces: Vec<&str> = url.split("/").collect();
-    let file_name = pieces.last().unwrap();
-    let file_path = format!("{}/{}", out, file_name);
-
-
     if let Ok(text) = response.text() {
         // Save to file
-        std::fs::write(file_path, text).unwrap();
+        let output_dir = format!("{}/{}", out, filename);
+        std::fs::write(output_dir, text).unwrap();
     } else {
         let message = format!("Failed saving download at: {}", out);
         return Err(message);

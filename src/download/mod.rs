@@ -1,7 +1,7 @@
 mod git;
 mod remote;
 
-use crate::config::Package;
+use crate::config::{Package, Out};
 use crate::tree;
 
 
@@ -12,11 +12,18 @@ const DEFAULT_OUTPUT_DIR: &str = "repositories";
 pub fn package(p: Package, fresh: bool) -> Result<(), String> {
     let name = p.name.unwrap();
 
-    // Check if package has git or remote
-    // Download accordingly
-    let output_dir = match p.out {
-        Some(path) => path,
-        None => format!("{}/{}", DEFAULT_OUTPUT_DIR, name)
+    let mut output_dir = default_directory(&name);
+    let mut filename = "no_filename_provided".to_string();
+
+
+    if let Some(out) = p.out {
+          if let Some(dir) = out.directory {
+              output_dir = dir;
+          }
+
+        if let Some(file) = out.filename {
+            filename = file
+        }
     };
 
 
@@ -33,9 +40,15 @@ pub fn package(p: Package, fresh: bool) -> Result<(), String> {
 
 
     if let Some(url) = p.remote {
-        remote::get(&url, &output_dir)?;
+        remote::get(&url, &output_dir, &filename)?;
     }
 
 
     Ok(())
+}
+
+
+
+fn default_directory(package_name: &str) -> String {
+    format!("{}/{}", DEFAULT_OUTPUT_DIR, package_name)
 }
