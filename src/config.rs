@@ -3,11 +3,7 @@ use indexmap::IndexMap;
 use std::fs::read_to_string;
 
 
-
-
 const GITHUB_HOST: &str = "https://github.com/";
-
-
 
 
 
@@ -36,7 +32,7 @@ pub struct Package {
     pub name: Option<String>,
     pub github: Option<Github>,
     pub remote: Option<String>,
-    pub to: Option<String>
+    pub out: Option<String>
 }
 
 
