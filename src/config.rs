@@ -34,7 +34,7 @@ impl Config {
 #[derive(Debug, Deserialize)]
 pub struct Package {
     pub name: Option<String>,
-    pub github: Option<GithubRepository>,
+    pub github: Option<Github>,
     pub remote: Option<String>,
     pub to: Option<String>
 }
@@ -50,13 +50,13 @@ impl Package {
 
 
 #[derive(Debug, Deserialize)]
-pub struct GithubRepository {
+pub struct Github {
     username: String,
     repository: String
 }
 
 
-impl GithubRepository {
+impl Github {
     pub fn url(&self) -> String {
         format!("{}/{}/{}", GITHUB_HOST, self.username, self.repository)
     }
