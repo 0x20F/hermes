@@ -3,9 +3,6 @@ use std::path::Path;
 
 
 pub fn clone(url: &str, out: &str, fresh: bool) -> Result<(), String> {
-    // TODO: Update this when using something outside of github
-    let url = format!("https://github.com/{}", url);
-
     // Remove the directory if it exists
     if fresh {
         match std::fs::remove_dir_all(&out) {

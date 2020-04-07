@@ -11,7 +11,7 @@ pub fn package(p: Package, fresh: bool) -> Result<(), String> {
     // Check if package has git or remote
     // Download accordingly
     let output_dir = match p.to {
-        Some(path) => format!("{}/{}", path, name),
+        Some(path) => path,
         None => format!("repositories/{}", name)
     };
 
