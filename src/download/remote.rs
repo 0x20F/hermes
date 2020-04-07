@@ -3,7 +3,7 @@ use std::fs::File;
 use std::io::Write;
 
 
-pub fn get(url: &str, out: &str, fresh: bool) -> Result<(), String> {
+pub fn get(url: &str, out: &str) -> Result<(), String> {
     let response = match blocking::get(url) {
         Ok(resp) => resp,
         Err(_) => {
@@ -20,7 +20,6 @@ pub fn get(url: &str, out: &str, fresh: bool) -> Result<(), String> {
 
     if let Ok(text) = response.text() {
         // Save to file
-        std::fs::create_dir_all(out);
         std::fs::write(file_path, text).unwrap();
     } else {
         let message = format!("Failed saving download at: {}", out);
