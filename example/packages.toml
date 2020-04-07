@@ -1,6 +1,5 @@
-[packages]
-highlights = { git = "zsh-users/zsh-syntax-highlighting", to = "magic/autoload" }
+[packages.pathogen]
+remote = "https://raw.githubusercontent.com/tpope/vim-pathogen/master/autoload/pathogen.vim"
 
 [packages.oh-my-zsh]
-git = "robbyrussell/oh-my-zsh"
-to = "magic/autoload"
+github = { username = "robbyrussell", repository = "oh-my-zsh" }
