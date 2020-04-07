@@ -4,9 +4,9 @@ mod download;
 
 use clap::{App, Arg};
 use paris::formatter::colorize_string;
+use std::thread;
 
 use config::Config;
-
 
 
 fn main() -> Result<(), String> {
@@ -42,6 +42,7 @@ fn main() -> Result<(), String> {
     }
 
 
+    let mut threads = vec![];
 
 
     if let Some(ref matches) = matches.subcommand_matches("cover") {
@@ -51,12 +52,29 @@ fn main() -> Result<(), String> {
             "packages.toml"
         };
 
+
         if let Some(config) = Config::from(config_path) {
-            // Start parsing somehow
+            println!("Cloning repositories");
+
             for (name, mut package) in config.packages {
-                package.set_name(name);
-                download::package(package, matches.is_present("fresh"))?;
+                let fresh = matches.is_present("fresh").clone();
+
+                threads.push(thread::spawn(move || {
+                    package.set_name(name);
+
+                    if let Ok(_) = download::package(package, fresh) {
+                        println!("Finished downloading a package");
+                    } else {
+                        println!("Something exploded and package couldn't be loaded");
+                    }
+                }));
             }
+        }
+
+
+        // Wait for all threads to finish before exiting
+        for thread in threads {
+            let _ = thread.join();
         }
     };
 
