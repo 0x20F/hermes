@@ -1,6 +1,7 @@
 use reqwest::blocking;
 
 
+
 pub fn get(url: &str, out: &str, filename: &str) -> Result<(), String> {
     let response = match blocking::get(url) {
         Ok(resp) => resp,

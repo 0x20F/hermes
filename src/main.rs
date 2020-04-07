@@ -2,12 +2,11 @@ mod config;
 mod tree;
 mod download;
 
-
-
 use clap::{App, Arg};
 use paris::formatter::colorize_string;
 
 use config::Config;
+
 
 
 fn main() -> Result<(), String> {
@@ -34,10 +33,11 @@ fn main() -> Result<(), String> {
 
 
 
-    if !matches.is_present("cover") && !matches.is_present("temp") {
+    if !matches.is_present("cover") {
         let message = colorize_string(
-            "You need to use either the <bright blue>cover</> or <bright blue>other</> commands"
+            "You need to use either the <bright blue>cover</> command"
         );
+
         return Err(message);
     }
 
