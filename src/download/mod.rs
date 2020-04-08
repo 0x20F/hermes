@@ -1,7 +1,7 @@
 mod git;
 mod remote;
 
-use crate::config::{Package, Out};
+use crate::config::Package;
 use crate::tree;
 
 
