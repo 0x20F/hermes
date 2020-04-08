@@ -31,7 +31,7 @@ impl Package {
     }
 
 
-    pub fn download(&self, fresh: bool) -> Result<(), String> {
+    pub fn build(&self, fresh: bool) -> Result<(), String> {
         let output_dir = &self.directory();
 
         if fresh {

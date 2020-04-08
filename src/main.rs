@@ -62,7 +62,7 @@ fn main() -> Result<(), String> {
 
                 threads.push(thread::spawn(move || {
                     package.set_name(name);
-                    package.download(fresh);
+                    package.build(fresh);
                 }));
             }
         }
