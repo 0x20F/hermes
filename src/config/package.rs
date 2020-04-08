@@ -36,8 +36,8 @@ impl Package {
 
         if fresh {
             tree::remove_dir(output_dir);
-            tree::create_dir(output_dir);
         }
+        tree::create_dir(output_dir);
 
 
         if let Some(repo) = &self.github {
@@ -57,19 +57,17 @@ impl Package {
 
 
     pub fn directory(&self) -> String {
-        let dir: &str = match &self.directory {
-            Some(dir) => dir,
-            None => DEFAULT_OUTPUT_DIR
-        };
-
-        dir.to_string()
+        return match &self.directory {
+            Some(dir) => dir.clone(),
+            _ => format!("{}/{}", DEFAULT_OUTPUT_DIR, self.name)
+        }
     }
 
 
     pub fn filename(&self) -> String {
         let file: &str = match &self.filename {
             Some(file) => file,
-            None => DEFAULT_FILENAME
+            _ => DEFAULT_FILENAME
         };
 
         file.to_string()
