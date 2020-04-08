@@ -36,7 +36,7 @@ fn main() -> Result<(), String> {
 
     if !matches.is_present("cover") {
         let message = colorize_string(
-            "You need to use either the <bright blue>cover</> command"
+            "You need to use the <bright blue>cover</> command"
         );
 
         return Err(message);
