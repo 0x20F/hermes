@@ -1,6 +1,6 @@
 use serde::{ Deserialize };
 
-use crate::download::download_package;
+use crate::download::{ git, remote };
 use crate::tree;
 
 use super::github::Github;
@@ -31,15 +31,28 @@ impl Package {
     }
 
 
-    pub fn download(&self, fresh: bool) {
-        let out = self.directory();
+    pub fn download(&self, fresh: bool) -> Result<(), String> {
+        let output_dir = &self.directory();
 
         if fresh {
-            tree::remove_dir(&out);
-            tree::create_dir(&out);
+            tree::remove_dir(output_dir);
+            tree::create_dir(output_dir);
         }
 
-        download_package(&self);
+
+        if let Some(repo) = &self.github {
+            return git::clone(&repo.url(), output_dir);
+        }
+
+
+        let output_file = &self.filename();
+
+        if let Some(url) = &self.remote {
+            return remote::get(url, output_dir, output_file);
+        }
+
+
+        Ok(())
     }
 
 
