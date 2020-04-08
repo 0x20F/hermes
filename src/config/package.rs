@@ -35,10 +35,6 @@ impl Package {
         let out = self.directory();
 
         if fresh {
-            println!();
-            println!("Its fresh {}", self.name);
-            println!();
-
             tree::remove_dir(&out);
             tree::create_dir(&out);
         }
