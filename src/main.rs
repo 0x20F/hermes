@@ -62,11 +62,7 @@ fn main() -> Result<(), String> {
 
                 threads.push(thread::spawn(move || {
                     package.set_name(name);
-
-                    match download::package(package, fresh) {
-                        Ok(package_name) => log!("\t<bright green>Finished</> downloading <u>{}</u>", package_name),
-                        Err(e) => log!("\t<bright red>Error</> {}", e)
-                    }
+                    package.download(fresh);
                 }));
             }
         }

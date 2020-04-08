@@ -1,10 +1,11 @@
 use std::fs;
+use remove_dir_all::*;
 
 
 
 // Recursively remove directories
 pub fn remove_dir(dir: &str) {
-    match fs::remove_dir_all(dir) {
+    match remove_dir_all(dir) {
         _ => () // Ignore whatever happens
     }
 }
