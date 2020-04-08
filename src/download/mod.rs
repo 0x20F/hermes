@@ -10,7 +10,7 @@ const DEFAULT_OUTPUT_DIR: &str = "repositories";
 
 
 
-pub fn package(p: Package, fresh: bool) -> Result<(), String> {
+pub fn package(p: Package, fresh: bool) -> Result<String, String> {
     let name = p.name.unwrap();
 
     let mut output_dir = default_directory(&name);
@@ -23,7 +23,7 @@ pub fn package(p: Package, fresh: bool) -> Result<(), String> {
           }
 
         if let Some(file) = out.filename {
-            filename = file
+            filename = file;
         }
     };
 
@@ -45,7 +45,7 @@ pub fn package(p: Package, fresh: bool) -> Result<(), String> {
     }
 
 
-    Ok(())
+    Ok(name)
 }
 
 

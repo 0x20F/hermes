@@ -4,6 +4,7 @@ mod download;
 
 use clap::{App, Arg};
 use paris::formatter::colorize_string;
+use paris::{ log };
 use std::thread;
 
 use config::Config;
@@ -54,7 +55,7 @@ fn main() -> Result<(), String> {
 
 
         if let Some(config) = Config::from(config_path) {
-            println!("Cloning repositories");
+            log!("<cyan>Cloning</> {} packages", config.packages.len());
 
             for (name, mut package) in config.packages {
                 let fresh = matches.is_present("fresh").clone();
@@ -62,10 +63,9 @@ fn main() -> Result<(), String> {
                 threads.push(thread::spawn(move || {
                     package.set_name(name);
 
-                    if let Ok(_) = download::package(package, fresh) {
-                        println!("Finished downloading a package");
-                    } else {
-                        println!("Something exploded and package couldn't be loaded");
+                    match download::package(package, fresh) {
+                        Ok(package_name) => log!("\t<bright green>Finished</> downloading <u>{}</u>", package_name),
+                        Err(e) => log!("\t<bright red>Error</> {}", e)
                     }
                 }));
             }
