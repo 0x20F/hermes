@@ -1,3 +1,6 @@
+[scripts]
+test = "echo 'lalalala'"
+
 [packages.pathogen]
 directory = "autoload"
 filename = "pathogen.vim"
