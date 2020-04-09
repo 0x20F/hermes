@@ -40,6 +40,7 @@ impl Package {
         tree::create_dir(output_dir);
 
         self.download()?;
+        //self.run();
 
         Ok(())
     }
@@ -78,5 +79,10 @@ impl Package {
         }
 
         Ok(())
+    }
+
+
+    fn run(&self) {
+        todo!();
     }
 }
