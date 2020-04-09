@@ -39,18 +39,7 @@ impl Package {
         }
         tree::create_dir(output_dir);
 
-
-        if let Some(repo) = &self.github {
-            return git::clone(&repo.url(), output_dir);
-        }
-
-
-        let output_file = &self.filename();
-
-        if let Some(url) = &self.remote {
-            return remote::get(url, output_dir, output_file);
-        }
-
+        self.download()?;
 
         Ok(())
     }
@@ -71,5 +60,23 @@ impl Package {
         };
 
         file.to_string()
+    }
+
+
+    fn download(&self) -> Result<(), String> {
+        let output_dir = &self.directory();
+
+        if let Some(repo) = &self.github {
+            return git::clone(&repo.url(), output_dir);
+        }
+
+
+        let output_file = &self.filename();
+
+        if let Some(url) = &self.remote {
+            return remote::get(url, output_dir, output_file);
+        }
+
+        Ok(())
     }
 }
