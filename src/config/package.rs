@@ -4,7 +4,8 @@ use crate::download::{ git, remote };
 use crate::tree;
 
 use super::github::Github;
-
+use crate::config::Config;
+use std::sync::Arc;
 
 
 const DEFAULT_OUTPUT_DIR: &str = "repositories";
@@ -12,7 +13,7 @@ const DEFAULT_FILENAME: &str = "no_name_provided";
 
 
 
-#[derive(Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize)]
 pub struct Package {
     pub github: Option<Github>,
     pub remote: Option<String>,
@@ -31,7 +32,7 @@ impl Package {
     }
 
 
-    pub fn build(&self, fresh: bool) -> Result<(), String> {
+    pub fn build(&self, fresh: bool, config: Arc<Config>) -> Result<(), String> {
         let output_dir = &self.directory();
 
         if fresh {
@@ -39,6 +40,8 @@ impl Package {
         }
         tree::create_dir(output_dir);
 
+
+        println!("Building package: {}", self.name);
         self.download()?;
         //self.run();
 
@@ -66,6 +69,8 @@ impl Package {
 
     fn download(&self) -> Result<(), String> {
         let output_dir = &self.directory();
+
+        println!("\tDownloading package: {}", self.name);
 
         if let Some(repo) = &self.github {
             return git::clone(&repo.url(), output_dir);

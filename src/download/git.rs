@@ -4,6 +4,8 @@ use std::path::Path;
 
 
 pub fn clone(url: &str, out: &str) -> Result<(), String> {
+    println!("\tCloning repo");
+
     match Repository::clone(&url, &out) {
         Ok(_) => (),
         Err(_) => {

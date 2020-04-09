@@ -5,7 +5,7 @@ use serde::{ Deserialize };
 const GITHUB_HOST: &str = "https://github.com/";
 
 
-#[derive(Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize)]
 pub struct Github {
     username: String,
     repository: String

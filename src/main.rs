@@ -8,6 +8,7 @@ use paris::{ log };
 use std::thread;
 
 use config::Config;
+use std::sync::Arc;
 
 
 fn main() -> Result<(), String> {
@@ -43,9 +44,6 @@ fn main() -> Result<(), String> {
     }
 
 
-    let mut threads = vec![];
-
-
     if let Some(ref matches) = matches.subcommand_matches("cover") {
         let config_path = if matches.is_present("config") {
             matches.value_of("config").unwrap()
@@ -54,18 +52,28 @@ fn main() -> Result<(), String> {
         };
 
 
-        if let Some(config) = Config::from(config_path) {
-            log!("<cyan>Cloning</> {} packages", config.packages.len());
 
-            for (name, mut package) in config.packages {
-                let fresh = matches.is_present("fresh").clone();
+        let mut threads = vec![];
 
-                threads.push(thread::spawn(move || {
-                    package.set_name(name);
-                    package.build(fresh);
-                }));
-            }
+        let config = match Config::from(config_path) {
+            Some(config) => Arc::new(config),
+            _ => return Err(colorize_string("<bright red>Failed to create config</>"))
+        };
+
+
+
+        log!("<cyan>Cloning</> {} packages", config.packages.len());
+
+        for (name, mut package) in config.packages.clone() {
+            let fresh = matches.is_present("fresh").clone();
+            let config = config.clone();
+
+            threads.push(thread::spawn(move || {
+                package.set_name(name);
+                package.build(fresh, config);
+            }));
         }
+
 
 
         // Wait for all threads to finish before exiting

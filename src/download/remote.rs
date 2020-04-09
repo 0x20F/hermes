@@ -3,6 +3,8 @@ use reqwest::blocking;
 
 
 pub fn get(url: &str, out: &str, filename: &str) -> Result<(), String> {
+    println!("\tDownloading file");
+
     let response = match blocking::get(url) {
         Ok(resp) => resp,
         Err(_) => {
