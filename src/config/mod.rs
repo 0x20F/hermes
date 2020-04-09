@@ -1,10 +1,12 @@
 mod github;
 mod package;
+mod script;
 
 use indexmap::IndexMap;
 use std::fs::read_to_string;
 use serde::{ Deserialize };
 
+use script::Script;
 pub use package::Package;
 
 
@@ -12,7 +14,7 @@ pub use package::Package;
 #[derive(Debug, Deserialize)]
 pub struct Config {
     pub packages: IndexMap<String, Package>,
-    pub scripts: Option<IndexMap<String, String>>
+    pub scripts: Option<IndexMap<String, Script>>
 }
 
 

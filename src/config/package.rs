@@ -1,12 +1,14 @@
-use serde::{ Deserialize };
+use serde::{Deserialize};
 
 use crate::download::{ git, remote };
+use crate::config::script::Script;
+use crate::config::Config;
+use super::github::Github;
 use crate::tree;
 
-use super::github::Github;
-use crate::config::Config;
 use std::sync::Arc;
 use indexmap::map::IndexMap;
+
 
 
 const DEFAULT_OUTPUT_DIR: &str = "repositories";
@@ -92,9 +94,9 @@ impl Package {
     }
 
 
-    fn run(&self, scripts: &IndexMap<String, String>) {
+    fn run(&self, scripts: &IndexMap<String, Script>) {
         for (name, script) in scripts {
-            println!("Found script: {}", name);
+            println!("Found script: {:?}", script);
         }
     }
 }
