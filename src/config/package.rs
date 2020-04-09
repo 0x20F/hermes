@@ -6,6 +6,7 @@ use crate::tree;
 use super::github::Github;
 use crate::config::Config;
 use std::sync::Arc;
+use indexmap::map::IndexMap;
 
 
 const DEFAULT_OUTPUT_DIR: &str = "repositories";
@@ -43,7 +44,11 @@ impl Package {
 
         println!("Building package: {}", self.name);
         self.download()?;
-        //self.run();
+
+        if let Some(scripts) = &config.scripts {
+            self.run(scripts);
+        }
+
 
         Ok(())
     }
@@ -87,7 +92,9 @@ impl Package {
     }
 
 
-    fn run(&self) {
-        todo!();
+    fn run(&self, scripts: &IndexMap<String, String>) {
+        for (name, script) in scripts {
+            println!("Found script: {}", name);
+        }
     }
 }
