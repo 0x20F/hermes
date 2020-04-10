@@ -3,7 +3,7 @@ mod error;
 mod config;
 mod download;
 
-use clap::{App, Arg, ArgMatches};
+use clap::{ App, ArgMatches, load_yaml };
 use paris::{ log };
 use paris::formatter::colorize_string;
 
@@ -16,26 +16,8 @@ use std::thread;
 
 fn main() -> Result<(), String> {
 
-    let matches = App::new("smoke")
-        .subcommand(
-            App::new("cover")
-                .about("Starts downloading everything")
-                .arg(
-                    Arg::with_name("config")
-                        .short('c')
-                        .long("config")
-                        .takes_value(true)
-                        .value_name("FILE")
-                        .help("Path to the config file")
-                )
-                .arg(
-                    Arg::with_name("fresh")
-                        .short('f')
-                        .help("Remove already downloaded repos and download fresh copies")
-                )
-        ).get_matches();
-
-
+    let yaml = load_yaml!("app.yml");
+    let matches = App::from(yaml).get_matches();
 
 
     if !matches.is_present("cover") {
@@ -87,6 +69,7 @@ fn main() -> Result<(), String> {
 
 
 
+
 /// Get the config file, if no parameter is passed it'll
 /// choose the default
 fn get_config(matches: &ArgMatches) -> Result<Arc<Config>, String> {
@@ -101,6 +84,7 @@ fn get_config(matches: &ArgMatches) -> Result<Arc<Config>, String> {
         Err(_) => Err(colorize_string("<bright red>Failed to read config</>"))
     }
 }
+
 
 
 

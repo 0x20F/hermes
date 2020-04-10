@@ -1,0 +1,14 @@
+name: smoke
+subcommands:
+  - cover:
+      about: Starts doing everything in the configuration file
+      args:
+          - config:
+              short: c
+              long: config
+              takes_value: true
+              value_name: FILE
+              help: Path to a custom config file
+          - fresh:
+              short: f
+              help: Remove already downloaded packages and download fresh copies
