@@ -54,13 +54,12 @@ fn main() -> Result<(), String> {
         };
 
 
-
-        let mut threads = vec![];
-
         let config = match Config::from(config_path) {
             Ok(config) => Arc::new(config),
             Err(_) => return Err(colorize_string("<bright red>Failed to read config</>"))
         };
+
+        let mut threads = vec![];
 
 
 
@@ -72,7 +71,8 @@ fn main() -> Result<(), String> {
 
             threads.push(thread::spawn(move || {
                 package.give(name, config);
-                package.build(fresh);
+
+                package.build(fresh)
             }));
         }
 
@@ -80,8 +80,11 @@ fn main() -> Result<(), String> {
 
         // Wait for all threads to finish before exiting
         for thread in threads {
-            let _ = thread.join();
+            let val = thread.join();
+            println!("{:?}", val);
         }
+
+
     };
 
     Ok(())
