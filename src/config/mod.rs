@@ -33,7 +33,7 @@ impl Config {
             return Err(Error::Config);
         }
 
-        return Ok(res.unwrap());
+        Ok(res.unwrap())
     }
 }
 

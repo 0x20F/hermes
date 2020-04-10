@@ -58,7 +58,7 @@ impl Package {
 
 
     pub fn directory(&self) -> String {
-        return match &self.directory {
+        match &self.directory {
             Some(dir) => dir.clone(),
             _ => format!("{}/{}", DEFAULT_OUTPUT_DIR, self.name)
         }

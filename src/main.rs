@@ -40,7 +40,7 @@ fn main() -> Result<(), String> {
 
 
     for (name, mut package) in config.packages.clone() {
-        let fresh = matches.is_present("fresh").clone();
+        let fresh = matches.is_present("fresh");
         let config = config.clone();
 
         threads.push(thread::spawn(move || {
@@ -81,7 +81,7 @@ fn get_config(matches: &ArgMatches) -> Result<Arc<Config>, String> {
         path = matches.value_of("config").unwrap()
     }
 
-    return match Config::from(path) {
+    match Config::from(path) {
         Ok(config) => Ok(Arc::new(config)),
         Err(_) => Err(colorize_string("<bright red>Failed to read config</>"))
     }
@@ -92,7 +92,7 @@ fn get_config(matches: &ArgMatches) -> Result<Arc<Config>, String> {
 
 /// Match the given error types, and output the
 /// proper message to the console
-fn display_errors(errors: &Vec<Error>) {
+fn display_errors(errors: &[Error]) {
     for error in errors {
         error.display();
     }
