@@ -57,7 +57,7 @@ fn main() -> Result<(), String> {
 
         let config = match Config::from(config_path) {
             Some(config) => Arc::new(config),
-            _ => return Err(colorize_string("<bright red>Failed to create config</>"))
+            None => return Err(colorize_string("<bright red>Failed to create config</>"))
         };
 
 
@@ -69,8 +69,8 @@ fn main() -> Result<(), String> {
             let config = config.clone();
 
             threads.push(thread::spawn(move || {
-                package.set_name(name);
-                package.build(fresh, config);
+                package.give(name, config);
+                package.build(fresh);
             }));
         }
 

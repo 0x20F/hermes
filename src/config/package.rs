@@ -1,13 +1,11 @@
 use serde::{Deserialize};
 
 use crate::download::{ git, remote };
-use crate::config::script::Script;
 use crate::config::Config;
 use super::github::Github;
 use crate::tree;
 
 use std::sync::Arc;
-use indexmap::map::IndexMap;
 
 
 
@@ -18,24 +16,28 @@ const DEFAULT_FILENAME: &str = "no_name_provided";
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct Package {
-    pub github: Option<Github>,
-    pub remote: Option<String>,
+    github: Option<Github>,
+    remote: Option<String>,
     directory: Option<String>,
     filename: Option<String>,
 
 
     #[serde(skip_deserializing)]
-    pub name: String
+    name: String,
+
+    #[serde(skip_deserializing)]
+    config: Arc<Config>
 }
 
 
 impl Package {
-    pub fn set_name(&mut self, name: String) {
+    pub fn give(&mut self, name: String, config: Arc<Config>) {
         self.name = name;
+        self.config = config;
     }
 
 
-    pub fn build(&self, fresh: bool, config: Arc<Config>) -> Result<(), String> {
+    pub fn build(&self, fresh: bool) -> Result<(), String> {
         let output_dir = &self.directory();
 
         if fresh {
@@ -47,10 +49,9 @@ impl Package {
         println!("Building package: {}", self.name);
         self.download()?;
 
-        if let Some(scripts) = &config.scripts {
-            self.run(scripts);
+        if self.config.scripts.is_some() {
+            self.run();
         }
-
 
         Ok(())
     }
@@ -94,9 +95,11 @@ impl Package {
     }
 
 
-    fn run(&self, scripts: &IndexMap<String, Script>) {
-        for (name, script) in scripts {
-            println!("Found script: {:?}", script);
+    fn run(&self) {
+        let scripts = self.config.scripts.as_ref();
+
+        for (name, script) in scripts.unwrap() {
+            println!("Found script: {} - {:?}", name, script);
         }
     }
 }

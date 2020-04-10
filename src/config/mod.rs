@@ -11,7 +11,7 @@ pub use package::Package;
 
 
 
-#[derive(Debug, Deserialize)]
+#[derive(Default, Debug, Deserialize)]
 pub struct Config {
     pub packages: IndexMap<String, Package>,
     pub scripts: Option<IndexMap<String, Script>>
