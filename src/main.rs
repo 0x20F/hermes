@@ -94,9 +94,6 @@ fn get_config(matches: &ArgMatches) -> Result<Arc<Config>, String> {
 /// proper message to the console
 fn display_errors(errors: &Vec<Error>) {
     for error in errors {
-        match error {
-            Error::Clone => error.display(),
-            _ => println!("TODO: No errors are handled properly yet!!")
-        }
+        error.display();
     }
 }
