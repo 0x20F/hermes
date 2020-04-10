@@ -93,7 +93,5 @@ fn get_config(matches: &ArgMatches) -> Result<Arc<Config>, String> {
 /// Match the given error types, and output the
 /// proper message to the console
 fn display_errors(errors: &[Error]) {
-    for error in errors {
-        error.display();
-    }
+    errors.iter().for_each(|e| e.display());
 }
