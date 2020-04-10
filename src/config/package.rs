@@ -6,7 +6,7 @@ use super::github::Github;
 use crate::tree;
 
 use std::sync::Arc;
-
+use crate::error::Error;
 
 
 const DEFAULT_OUTPUT_DIR: &str = "repositories";
@@ -37,7 +37,7 @@ impl Package {
     }
 
 
-    pub fn build(&self, fresh: bool) -> Result<(), String> {
+    pub fn build(&self, fresh: bool) -> Result<(), Error> {
         let output_dir = &self.directory();
 
         if fresh {
@@ -75,7 +75,7 @@ impl Package {
     }
 
 
-    fn download(&self) -> Result<(), String> {
+    fn download(&self) -> Result<(), Error> {
         let output_dir = &self.directory();
 
         println!("\tDownloading package: {}", self.name);

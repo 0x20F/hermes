@@ -1,14 +1,16 @@
-mod config;
 mod tree;
+mod error;
+mod config;
 mod download;
 
 use clap::{App, Arg};
-use paris::formatter::colorize_string;
 use paris::{ log };
-use std::thread;
+use paris::formatter::colorize_string;
 
 use config::Config;
 use std::sync::Arc;
+use std::thread;
+
 
 
 fn main() -> Result<(), String> {
@@ -56,8 +58,8 @@ fn main() -> Result<(), String> {
         let mut threads = vec![];
 
         let config = match Config::from(config_path) {
-            Some(config) => Arc::new(config),
-            None => return Err(colorize_string("<bright red>Failed to create config</>"))
+            Ok(config) => Arc::new(config),
+            Err(_) => return Err(colorize_string("<bright red>Failed to read config</>"))
         };
 
 
