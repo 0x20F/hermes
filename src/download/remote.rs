@@ -1,5 +1,6 @@
 use reqwest::blocking;
 use crate::error::Error;
+use crate::tree::create_file;
 
 
 pub fn get(url: &str, out: &str, filename: &str) -> Result<(), Error> {
@@ -16,7 +17,7 @@ pub fn get(url: &str, out: &str, filename: &str) -> Result<(), Error> {
     if let Ok(text) = response.text() {
         // Save to file
         let output_dir = format!("{}/{}", out, filename);
-        std::fs::write(output_dir, text).unwrap();
+        create_file(&output_dir, &text);
     } else {
         // Saving failed
         return Err(Error::Save);

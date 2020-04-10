@@ -17,3 +17,11 @@ pub fn create_dir(dir: &str) {
         _ => () // Ignore whatever happens
     }
 }
+
+
+// Create a new file and write text to it
+pub fn create_file(dir: &str, text: &str) {
+    match fs::write(dir, text) {
+        _ => () // Ignore whatever happens
+    }
+}

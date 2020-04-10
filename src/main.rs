@@ -3,11 +3,12 @@ mod error;
 mod config;
 mod download;
 
-use clap::{App, Arg};
+use clap::{App, Arg, ArgMatches};
 use paris::{ log };
 use paris::formatter::colorize_string;
 
 use config::Config;
+use error::Error;
 use std::sync::Arc;
 use std::thread;
 
@@ -46,46 +47,70 @@ fn main() -> Result<(), String> {
     }
 
 
-    if let Some(ref matches) = matches.subcommand_matches("cover") {
-        let config_path = if matches.is_present("config") {
-            matches.value_of("config").unwrap()
-        } else {
-            "packages.toml"
-        };
 
+    let matches = matches.subcommand_matches("cover").unwrap();
+    let config = get_config(matches)?;
+    let mut threads = vec![];
+    let mut errors = vec![];
 
-        let config = match Config::from(config_path) {
-            Ok(config) => Arc::new(config),
-            Err(_) => return Err(colorize_string("<bright red>Failed to read config</>"))
-        };
+    log!("<cyan>Cloning</> {} packages", config.packages.len());
 
-        let mut threads = vec![];
+    for (name, mut package) in config.packages.clone() {
+        let fresh = matches.is_present("fresh").clone();
+        let config = config.clone();
 
+        threads.push(thread::spawn(move || {
+            package.give(name, config);
 
+            package.build(fresh)
+        }));
+    }
 
-        log!("<cyan>Cloning</> {} packages", config.packages.len());
+    // Wait for all threads to finish before exiting
+    for thread in threads {
+        let val = thread.join();
 
-        for (name, mut package) in config.packages.clone() {
-            let fresh = matches.is_present("fresh").clone();
-            let config = config.clone();
-
-            threads.push(thread::spawn(move || {
-                package.give(name, config);
-
-                package.build(fresh)
-            }));
+        // Save all returned errors so they can
+        // be addressed properly when all threads
+        // are finished
+        if let Ok(res) = val {
+            if let Err(e) = res {
+                errors.push(e);
+            }
         }
+    }
 
-
-
-        // Wait for all threads to finish before exiting
-        for thread in threads {
-            let val = thread.join();
-            println!("{:?}", val);
-        }
-
-
-    };
+    display_errors(&errors);
 
     Ok(())
+}
+
+
+
+/// Get the config file, if no parameter is passed it'll
+/// choose the default
+fn get_config(matches: &ArgMatches) -> Result<Arc<Config>, String> {
+    let mut path = "packages.toml";
+
+    if matches.is_present("config") {
+        path = matches.value_of("config").unwrap()
+    }
+
+    return match Config::from(path) {
+        Ok(config) => Ok(Arc::new(config)),
+        Err(_) => Err(colorize_string("<bright red>Failed to read config</>"))
+    }
+}
+
+
+
+/// Match the given error types, and output the
+/// proper message to the console
+fn display_errors(errors: &Vec<Error>) {
+    for error in errors {
+        match error {
+            Error::Clone => println!("Something exploded when cloning something"),
+            _ => println!("TODO: No errors are handled properly yet!!")
+        }
+    }
 }
