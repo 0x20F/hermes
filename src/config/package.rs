@@ -99,7 +99,8 @@ impl Package {
         let scripts = self.config.scripts.as_ref();
 
         for (name, script) in scripts.unwrap() {
-            println!("Found script: {} - {:?}", name, script);
+            println!("Found script: {}", name);
+            script.exec();
         }
     }
 }
