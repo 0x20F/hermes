@@ -37,6 +37,8 @@ fn main() -> Result<(), String> {
 
     log!("<cyan>Cloning</> {} packages", config.packages.len());
 
+
+
     for (name, mut package) in config.packages.clone() {
         let fresh = matches.is_present("fresh").clone();
         let config = config.clone();
@@ -93,7 +95,7 @@ fn get_config(matches: &ArgMatches) -> Result<Arc<Config>, String> {
 fn display_errors(errors: &Vec<Error>) {
     for error in errors {
         match error {
-            Error::Clone => println!("Something exploded when cloning something"),
+            Error::Clone => error.display(),
             _ => println!("TODO: No errors are handled properly yet!!")
         }
     }
