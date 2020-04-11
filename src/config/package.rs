@@ -26,10 +26,10 @@ pub struct Package {
 
 
     #[serde(skip_deserializing)]
-    name: String,
+    config: Arc<Config>,
 
     #[serde(skip_deserializing)]
-    config: Arc<Config>
+    pub name: String
 }
 
 
@@ -50,7 +50,6 @@ impl Package {
         tree::create_dir(output_dir);
 
 
-        println!("Building package: {}", self.name);
         if let Some(repo) = &self.github {
             return git::clone(&repo.url(), output_dir);
         }
@@ -81,7 +80,7 @@ impl Package {
             let script = &mut scripts[name];
 
             script.give(name);
-            script.exec();
+            script.exec(self);
         }
 
         Ok(())
@@ -103,5 +102,10 @@ impl Package {
         };
 
         file.to_string()
+    }
+
+
+    pub fn full_path(&self) -> String {
+        format!("{}/{}", tree::current_dir(), self.directory())
     }
 }

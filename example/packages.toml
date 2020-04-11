@@ -1,5 +1,5 @@
 [scripts]
-test = "echo 'lalalala'"
+test = { script = "echo 'Current dir: { directory }, File: { file }, Name: { name }'" }
 
 [packages.pathogen]
 directory = "autoload"

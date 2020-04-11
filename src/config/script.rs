@@ -1,6 +1,8 @@
 use serde::Deserialize;
 use paris::log;
-use shells::{ sh };
+use shells::execute_with;
+use key_list::KeyList;
+use crate::config::Package;
 
 
 
@@ -9,7 +11,7 @@ pub struct Script {
     script: String,
 
     #[serde(skip_deserializing)]
-    name: String
+    name: String,
 }
 
 
@@ -19,15 +21,31 @@ impl Script {
     }
 
 
-    pub fn exec(&self) {
+    pub fn exec(&self, package: &Package) {
         log!("<magenta>Running</>: {}", self.name);
 
-        let (_, stdout, _) = sh!("{}", self.script);
-        self.display(&stdout);
+        let (_, stdout, _) = execute_with("sh", &self.prepare_script(package));
+        println!("{}", stdout);
     }
 
 
-    pub fn display(&self, output: &str) {
-        println!("{}", output);
+    fn prepare_script(&self, package: &Package) -> String {
+        let cmd = &self.script;
+        let keys = KeyList::new(cmd, '{', '}');
+        let mut res = String::from(cmd);
+
+        for key in keys {
+            let clean = key.replace(&['{', '}'][..], "");
+
+            match clean.trim() {
+                "directory" => res = res.replace(&key, &package.full_path()),
+                "file" => res = res.replace(&key, &package.filename()),
+                "name" => res = res.replace(&key, &package.name),
+
+                _ => () // Key shouldn't be replaced if not defined
+            }
+        }
+
+        res
     }
 }
