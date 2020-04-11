@@ -7,19 +7,16 @@ mod event_output;
 use clap::{ App, ArgMatches, load_yaml };
 use paris::formatter::colorize_string;
 
-use config::Config;
-use error::Error;
+use config::{ Package, Config };
 use event_output::Type;
 use std::sync::Arc;
 use std::thread;
-
 
 
 fn main() -> Result<(), String> {
 
     let yaml = load_yaml!("app.yml");
     let matches = App::from(yaml).get_matches();
-
 
     if !matches.is_present("cover") {
         let message = colorize_string(
@@ -30,43 +27,14 @@ fn main() -> Result<(), String> {
     }
 
 
-
     let matches = matches.subcommand_matches("cover").unwrap();
     let config = get_config(matches)?;
-    let mut threads = vec![];
-    let mut errors = vec![];
 
-    let format_message: String = format!("{} packages", config.packages.len());
-    Type::Clone(format_message.as_str()).show();
+    let packages = build_packages(&config, matches.is_present("fresh"));
 
-
-
-    for (name, mut package) in config.packages.clone() {
-        let fresh = matches.is_present("fresh");
-        let config = config.clone();
-
-        threads.push(thread::spawn(move || {
-            package.give(name, config);
-
-            package.build(fresh)
-        }));
+    for package in packages {
+        package.exec().unwrap();
     }
-
-    // Wait for all threads to finish before exiting
-    for thread in threads {
-        let val = thread.join();
-
-        // Save all returned errors so they can
-        // be addressed properly when all threads
-        // are finished
-        if let Ok(res) = val {
-            if let Err(e) = res {
-                errors.push(e);
-            }
-        }
-    }
-
-    display_errors(&errors);
 
     Ok(())
 }
@@ -92,8 +60,35 @@ fn get_config(matches: &ArgMatches) -> Result<Arc<Config>, String> {
 
 
 
-/// Match the given error types, and output the
-/// proper message to the console
-fn display_errors(errors: &[Error]) {
-    errors.iter().for_each(|e| e.display());
+fn build_packages(config: &Arc<Config>, fresh: bool) -> Vec<Package> {
+    let mut threads = vec![];
+    let mut survivors = vec![];
+
+    for (name, mut package) in config.packages.clone() {
+        let config = config.clone();
+
+        threads.push(thread::spawn(move || {
+            package.give(name, config);
+
+            // If it's not an error, give back the
+            // package so others can use it
+            match package.build(fresh) {
+                Ok(_) => Ok(package),
+                Err(e) => Err(e)
+            }
+        }));
+    }
+
+    // Wait for all threads to finish before exiting
+    for thread in threads {
+        // If thread didn't die, display error or save package
+        if let Ok(res) = thread.join() {
+            match res {
+                Ok(p) => survivors.push(p),
+                Err(e) => e.display()
+            }
+        }
+    }
+
+    survivors
 }

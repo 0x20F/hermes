@@ -19,8 +19,11 @@ const DEFAULT_FILENAME: &str = "no_name_provided";
 pub struct Package {
     github: Option<Github>,
     remote: Option<String>,
+
     directory: Option<String>,
     filename: Option<String>,
+
+    exec: Option<Vec<String>>,
 
 
     #[serde(skip_deserializing)]
@@ -29,6 +32,7 @@ pub struct Package {
     #[serde(skip_deserializing)]
     config: Arc<Config>
 }
+
 
 
 impl Package {
@@ -48,10 +52,37 @@ impl Package {
 
 
         println!("Building package: {}", self.name);
-        self.download()?;
+        if let Some(repo) = &self.github {
+            return git::clone(&repo.url(), output_dir);
+        }
 
-        if self.config.scripts.is_some() {
-            self.run();
+
+        let output_file = &self.filename();
+
+        if let Some(url) = &self.remote {
+            return remote::get(url, output_dir, output_file);
+        }
+
+        Ok(())
+    }
+
+
+    pub fn exec(&self) -> Result<(), Error> {
+        let names = match self.exec.as_ref() {
+            Some(vec) => vec,
+            None => return Ok(())
+        };
+
+        let mut scripts = match self.config.scripts.clone() {
+            Some(map) => map,
+            None => return Err(Error::NoScripts)
+        };
+
+        for name in names {
+            let script = &mut scripts[name];
+
+            script.give(name);
+            script.exec();
         }
 
         Ok(())
@@ -73,40 +104,5 @@ impl Package {
         };
 
         file.to_string()
-    }
-
-
-    fn download(&self) -> Result<(), Error> {
-        let output_dir = &self.directory();
-
-        if let Some(repo) = &self.github {
-            return git::clone(&repo.url(), output_dir);
-        }
-
-
-        let output_file = &self.filename();
-
-
-        if let Some(url) = &self.remote {
-            let format_message: String = format!("Downloaded {}", self.name);
-            Type::Done(format_message.as_str()).show();
-
-            return remote::get(url, output_dir, output_file);
-        }
-
-        let format_message: String = format!("Failed to download {}", self.name);
-        Type::Error(format_message.as_str()).show();
-
-        Ok(())
-    }
-
-
-    fn run(&self) {
-        let scripts = self.config.scripts.as_ref();
-
-        for (name, script) in scripts.unwrap() {
-            println!("Found script: {}", name);
-            script.exec();
-        }
     }
 }
