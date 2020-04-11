@@ -60,7 +60,7 @@ fn get_config(matches: &ArgMatches) -> Result<Arc<Config>, String> {
 
 fn build_packages(config: &Arc<Config>, fresh: bool) -> Vec<Package> {
     let mut threads = vec![];
-    let mut packages = vec![];
+    let mut survivors = vec![];
 
     for (name, mut package) in config.packages.clone() {
         let config = config.clone();
@@ -79,15 +79,14 @@ fn build_packages(config: &Arc<Config>, fresh: bool) -> Vec<Package> {
 
     // Wait for all threads to finish before exiting
     for thread in threads {
-        // If thread didn't die, display error or save
-        // package
+        // If thread didn't die, display error or save package
         if let Ok(res) = thread.join() {
             match res {
-                Ok(p) => packages.push(p),
+                Ok(p) => survivors.push(p),
                 Err(e) => e.display()
             }
         }
     }
 
-    packages
+    survivors
 }
