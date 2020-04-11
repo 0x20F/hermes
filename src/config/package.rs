@@ -59,7 +59,16 @@ impl Package {
     pub fn exec(&self) -> Result<(), Error> {
         let scripts = self.config.scripts.clone();
 
+        let exec = match self.exec.as_ref() {
+            Some(vec) => vec,
+            None => return Ok(())
+        };
+
         for (name, mut script) in scripts.unwrap() {
+            if !exec.contains(&name) {
+                continue;
+            }
+
             script.give(&name);
             script.exec();
         }
