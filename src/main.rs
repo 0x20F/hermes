@@ -31,7 +31,7 @@ fn main() -> Result<(), String> {
     let packages = build_packages(&config, matches.is_present("fresh"));
 
     for package in packages {
-        package.exec();
+        package.exec().unwrap();
     }
 
     Ok(())
