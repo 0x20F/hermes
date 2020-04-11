@@ -7,12 +7,13 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-git2 = "0.13"
 toml = "0.4"
-remove_dir_all = "0.5"
+git2 = "0.13"
+key-list = "1"
 shells = "0.2"
-reqwest = { version = "0.10", features = [ "blocking" ] }
+remove_dir_all = "0.5"
 indexmap = { version = "1.3", features = [ "serde-1" ] }
-paris = { version = "1.4", features = [ "macros", "no_logger" ] }
 serde = { version = "1.0.102", features = [ "derive" ] }
+reqwest = { version = "0.10", features = [ "blocking" ] }
+paris = { version = "1.4", features = [ "macros", "no_logger" ] }
 clap = { git = "https://github.com/clap-rs/clap/", features = [ "yaml" ]}
