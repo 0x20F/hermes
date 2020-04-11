@@ -4,6 +4,7 @@ use crate::download::{ git, remote };
 use crate::config::Config;
 use super::github::Github;
 use crate::tree;
+use crate::event_output::Type;
 
 use std::sync::Arc;
 use crate::error::Error;
@@ -78,8 +79,6 @@ impl Package {
     fn download(&self) -> Result<(), Error> {
         let output_dir = &self.directory();
 
-        println!("\tDownloading package: {}", self.name);
-
         if let Some(repo) = &self.github {
             return git::clone(&repo.url(), output_dir);
         }
@@ -87,9 +86,16 @@ impl Package {
 
         let output_file = &self.filename();
 
+
         if let Some(url) = &self.remote {
+            let format_message: String = format!("Downloaded {}", self.name);
+            Type::Done(format_message.as_str()).show();
+
             return remote::get(url, output_dir, output_file);
         }
+
+        let format_message: String = format!("Failed to download {}", self.name);
+        Type::Error(format_message.as_str()).show();
 
         Ok(())
     }

@@ -1,11 +1,10 @@
 use reqwest::blocking;
 use crate::error::Error;
 use crate::tree::create_file;
+use crate::event_output::Type;
 
 
 pub fn get(url: &str, out: &str, filename: &str) -> Result<(), Error> {
-    println!("\tDownloading file");
-
     let response = match blocking::get(url) {
         Ok(resp) => resp,
         Err(_) => {
@@ -23,6 +22,8 @@ pub fn get(url: &str, out: &str, filename: &str) -> Result<(), Error> {
         return Err(Error::Save);
     }
 
+    let format_message: String = format!("Downloaded {}", filename);
+    Type::Done(format_message.as_str()).show();
 
     Ok(())
 }

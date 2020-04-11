@@ -2,13 +2,14 @@ mod tree;
 mod error;
 mod config;
 mod download;
+mod event_output;
 
 use clap::{ App, ArgMatches, load_yaml };
-use paris::{ log };
 use paris::formatter::colorize_string;
 
 use config::Config;
 use error::Error;
+use event_output::Type;
 use std::sync::Arc;
 use std::thread;
 
@@ -35,7 +36,8 @@ fn main() -> Result<(), String> {
     let mut threads = vec![];
     let mut errors = vec![];
 
-    log!("<cyan>Cloning</> {} packages", config.packages.len());
+    let format_message: String = format!("{} packages", config.packages.len());
+    Type::Clone(format_message.as_str()).show();
 
 
 
