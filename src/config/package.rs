@@ -18,8 +18,11 @@ const DEFAULT_FILENAME: &str = "no_name_provided";
 pub struct Package {
     github: Option<Github>,
     remote: Option<String>,
+
     directory: Option<String>,
     filename: Option<String>,
+
+    exec: Option<Vec<String>>,
 
 
     #[serde(skip_deserializing)]
@@ -28,6 +31,7 @@ pub struct Package {
     #[serde(skip_deserializing)]
     config: Arc<Config>
 }
+
 
 
 impl Package {
@@ -45,12 +49,19 @@ impl Package {
         }
         tree::create_dir(output_dir);
 
-
         println!("Building package: {}", self.name);
         self.download()?;
 
-        if self.config.scripts.is_some() {
-            self.run();
+        Ok(())
+    }
+
+
+    pub fn exec(&self) -> Result<(), Error> {
+        let scripts = self.config.scripts.clone();
+
+        for (name, mut script) in scripts.unwrap() {
+            script.give(&name);
+            script.exec();
         }
 
         Ok(())
@@ -92,15 +103,5 @@ impl Package {
         }
 
         Ok(())
-    }
-
-
-    fn run(&self) {
-        let scripts = self.config.scripts.as_ref();
-
-        for (name, script) in scripts.unwrap() {
-            println!("Found script: {}", name);
-            script.exec();
-        }
     }
 }
