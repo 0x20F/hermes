@@ -57,19 +57,20 @@ impl Package {
 
 
     pub fn exec(&self) -> Result<(), Error> {
-        let scripts = self.config.scripts.clone();
-
-        let exec = match self.exec.as_ref() {
+        let names = match self.exec.as_ref() {
             Some(vec) => vec,
             None => return Ok(())
         };
 
-        for (name, mut script) in scripts.unwrap() {
-            if !exec.contains(&name) {
-                continue;
-            }
+        let mut scripts = match self.config.scripts.clone() {
+            Some(map) => map,
+            None => return Err(Error::NoScripts)
+        };
 
-            script.give(&name);
+        for name in names {
+            let script = &mut scripts[name];
+
+            script.give(name);
             script.exec();
         }
 
