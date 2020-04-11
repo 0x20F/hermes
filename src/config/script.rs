@@ -8,21 +8,13 @@ use crate::config::Package;
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct Script {
-    script: String,
-
-    #[serde(skip_deserializing)]
-    name: String,
+    script: String
 }
 
 
 impl Script {
-    pub fn give(&mut self, name: &str) {
-        self.name = name.to_owned();
-    }
-
-
     pub fn exec(&self, package: &Package) {
-        log!("<magenta>Running</>: {}", self.name);
+        log!("<magenta>Running</> script");
 
         let (_, stdout, _) = execute_with("sh", &self.prepare_script(package));
         println!("{}", stdout);

@@ -7,11 +7,8 @@ use clap::{ App, ArgMatches, load_yaml };
 use paris::formatter::colorize_string;
 
 use config::{ Package, Config };
-use std::sync::Arc;
 use std::thread;
-
-
-
+use crate::error::Error;
 
 
 fn main() -> Result<(), String> {
@@ -33,8 +30,13 @@ fn main() -> Result<(), String> {
 
     let packages = build_packages(&config, matches.is_present("fresh"));
 
-    for package in packages {
-        package.exec().unwrap();
+    if let Some(scripts) = &config.scripts {
+        for package in packages {
+            package.exec(scripts).unwrap();
+        }
+    } else {
+        // For now
+        Error::NoScripts.display();
     }
 
     Ok(())
@@ -45,7 +47,7 @@ fn main() -> Result<(), String> {
 
 /// Get the config file, if no parameter is passed it'll
 /// choose the default
-fn get_config(matches: &ArgMatches) -> Result<Arc<Config>, String> {
+fn get_config(matches: &ArgMatches) -> Result<Config, String> {
     let mut path = "packages.toml";
 
     if matches.is_present("config") {
@@ -53,7 +55,7 @@ fn get_config(matches: &ArgMatches) -> Result<Arc<Config>, String> {
     }
 
     match Config::from(path) {
-        Ok(config) => Ok(Arc::new(config)),
+        Ok(config) => Ok(config),
         Err(_) => Err(colorize_string("<bright red>Failed to read config</>"))
     }
 }
@@ -61,15 +63,13 @@ fn get_config(matches: &ArgMatches) -> Result<Arc<Config>, String> {
 
 
 
-fn build_packages(config: &Arc<Config>, fresh: bool) -> Vec<Package> {
+fn build_packages(config: &Config, fresh: bool) -> Vec<Package> {
     let mut threads = vec![];
     let mut survivors = vec![];
 
     for (name, mut package) in config.packages.clone() {
-        let config = config.clone();
-
         threads.push(thread::spawn(move || {
-            package.give(name, config);
+            package.give(name);
 
             // If it's not an error, give back the
             // package so others can use it

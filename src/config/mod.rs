@@ -2,19 +2,19 @@ mod github;
 mod package;
 mod script;
 
-use indexmap::IndexMap;
 use std::fs::read_to_string;
 use serde::{ Deserialize };
 
 use script::Script;
 use crate::error::Error;
 pub use package::Package;
+use std::collections::HashMap;
 
 
 #[derive(Default, Debug, Deserialize)]
 pub struct Config {
-    pub packages: IndexMap<String, Package>,
-    pub scripts: Option<IndexMap<String, Script>>
+    pub packages: HashMap<String, Package>,
+    pub scripts: Option<HashMap<String, Script>>
 }
 
 

@@ -1,12 +1,12 @@
 use serde::{Deserialize};
 
 use crate::download::{ git, remote };
-use crate::config::Config;
 use super::github::Github;
 use crate::tree;
 
-use std::sync::Arc;
 use crate::error::Error;
+use crate::config::script::Script;
+use std::collections::HashMap;
 
 
 const DEFAULT_OUTPUT_DIR: &str = "repositories";
@@ -26,18 +26,14 @@ pub struct Package {
 
 
     #[serde(skip_deserializing)]
-    config: Arc<Config>,
-
-    #[serde(skip_deserializing)]
     pub name: String
 }
 
 
 
 impl Package {
-    pub fn give(&mut self, name: String, config: Arc<Config>) {
+    pub fn give(&mut self, name: String) {
         self.name = name;
-        self.config = config;
     }
 
 
@@ -65,21 +61,15 @@ impl Package {
     }
 
 
-    pub fn exec(&self) -> Result<(), Error> {
+    pub fn exec(&self, scripts: &HashMap<String, Script>) -> Result<(), Error> {
         let names = match self.exec.as_ref() {
             Some(vec) => vec,
             None => return Ok(())
         };
 
-        let mut scripts = match self.config.scripts.clone() {
-            Some(map) => map,
-            None => return Err(Error::NoScripts)
-        };
-
         for name in names {
-            let script = &mut scripts[name];
+            let script = &scripts.get(name).unwrap();
 
-            script.give(name);
             script.exec(self);
         }
 

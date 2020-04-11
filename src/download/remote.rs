@@ -4,8 +4,6 @@ use crate::tree::create_file;
 
 
 pub fn get(url: &str, out: &str, filename: &str) -> Result<(), Error> {
-    println!("\tDownloading file");
-
     let response = match blocking::get(url) {
         Ok(resp) => resp,
         Err(_) => {
