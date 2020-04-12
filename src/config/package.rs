@@ -37,6 +37,14 @@ impl Package {
     }
 
 
+    pub fn has_exec(&self) -> bool {
+        match self.exec {
+            Some(_) => true,
+            _ => false
+        }
+    }
+
+
     pub fn build(&self, fresh: bool) -> Result<(), Error> {
         let output_dir = &self.directory();
 
@@ -45,6 +53,7 @@ impl Package {
         }
         tree::create_dir(output_dir);
 
+        println!("Building package");
 
         if let Some(repo) = &self.github {
             return git::clone(&repo.url(), output_dir);
@@ -68,7 +77,7 @@ impl Package {
         };
 
         for name in names {
-            let script = &scripts.get(name).unwrap();
+            let script = scripts.get(name).unwrap();
 
             script.exec(self);
         }
