@@ -30,6 +30,8 @@ fn main() -> Result<(), String> {
     let matches = matches.subcommand_matches("cover").unwrap();
     let config = get_config(matches)?;
 
+    let format_message: String = format!("found {} packages", config.packages.len());
+    Type::Clone(format_message.as_str()).show();
     let packages = build_packages(&config, matches.is_present("fresh"));
 
     for package in packages {

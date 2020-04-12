@@ -1,4 +1,4 @@
-use paris::{ log };
+use crate::event_output::Type;
 
 
 
@@ -20,6 +20,6 @@ impl Error {
             _ => ""
         };
 
-        log!("<bright red>Error</> {}", message);
+        Type::Error(message).show();
     }
 }
