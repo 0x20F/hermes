@@ -1,16 +1,17 @@
 use serde::{Deserialize};
 
 use crate::download::{ git, remote };
-use crate::config::Config;
 use super::github::Github;
 use crate::tree;
 
-use std::sync::Arc;
 use crate::error::Error;
+use crate::config::script::Script;
+use std::collections::HashMap;
 
 
 const DEFAULT_OUTPUT_DIR: &str = "repositories";
 const DEFAULT_FILENAME: &str = "no_name_provided";
+
 
 
 
@@ -26,18 +27,14 @@ pub struct Package {
 
 
     #[serde(skip_deserializing)]
-    name: String,
-
-    #[serde(skip_deserializing)]
-    config: Arc<Config>
+    name: String
 }
 
 
 
 impl Package {
-    pub fn give(&mut self, name: String, config: Arc<Config>) {
-        self.name = name;
-        self.config = config;
+    pub fn get_name(&self) -> &String {
+        &self.name
     }
 
 
@@ -49,8 +46,8 @@ impl Package {
         }
         tree::create_dir(output_dir);
 
+        println!("Building package");
 
-        println!("Building package: {}", self.name);
         if let Some(repo) = &self.github {
             return git::clone(&repo.url(), output_dir);
         }
@@ -66,22 +63,16 @@ impl Package {
     }
 
 
-    pub fn exec(&self) -> Result<(), Error> {
+    pub fn exec(&self, scripts: &HashMap<String, Script>) -> Result<(), Error> {
         let names = match self.exec.as_ref() {
             Some(vec) => vec,
             None => return Ok(())
         };
 
-        let mut scripts = match self.config.scripts.clone() {
-            Some(map) => map,
-            None => return Err(Error::NoScripts)
-        };
-
         for name in names {
-            let script = &mut scripts[name];
+            let script = scripts.get(name).unwrap();
 
-            script.give(name);
-            script.exec();
+            script.exec(self);
         }
 
         Ok(())
@@ -103,5 +94,10 @@ impl Package {
         };
 
         file.to_string()
+    }
+
+
+    pub fn full_path(&self) -> String {
+        format!("{}/{}", tree::current_dir(), self.directory())
     }
 }

@@ -7,10 +7,10 @@ mod event_output;
 use clap::{ App, ArgMatches, load_yaml };
 use paris::formatter::colorize_string;
 
-use config::{ Package, Config };
+use config::Config;
 use event_output::Type;
-use std::sync::Arc;
-use std::thread;
+
+
 
 
 fn main() -> Result<(), String> {
@@ -32,11 +32,8 @@ fn main() -> Result<(), String> {
 
     let format_message: String = format!("found {} packages", config.packages.len());
     Type::Clone(format_message.as_str()).show();
-    let packages = build_packages(&config, matches.is_present("fresh"));
-
-    for package in packages {
-        package.exec().unwrap();
-    }
+    let packages = config.build_packages(matches.is_present("fresh"));
+    config.execute_scripts(packages);
 
     Ok(())
 }
@@ -46,7 +43,7 @@ fn main() -> Result<(), String> {
 
 /// Get the config file, if no parameter is passed it'll
 /// choose the default
-fn get_config(matches: &ArgMatches) -> Result<Arc<Config>, String> {
+fn get_config(matches: &ArgMatches) -> Result<Config, String> {
     let mut path = "packages.toml";
 
     if matches.is_present("config") {
@@ -54,43 +51,7 @@ fn get_config(matches: &ArgMatches) -> Result<Arc<Config>, String> {
     }
 
     match Config::from(path) {
-        Ok(config) => Ok(Arc::new(config)),
+        Ok(config) => Ok(config),
         Err(_) => Err(colorize_string("<bright red>Failed to read config</>"))
     }
-}
-
-
-
-
-fn build_packages(config: &Arc<Config>, fresh: bool) -> Vec<Package> {
-    let mut threads = vec![];
-    let mut survivors = vec![];
-
-    for (name, mut package) in config.packages.clone() {
-        let config = config.clone();
-
-        threads.push(thread::spawn(move || {
-            package.give(name, config);
-
-            // If it's not an error, give back the
-            // package so others can use it
-            match package.build(fresh) {
-                Ok(_) => Ok(package),
-                Err(e) => Err(e)
-            }
-        }));
-    }
-
-    // Wait for all threads to finish before exiting
-    for thread in threads {
-        // If thread didn't die, display error or save package
-        if let Ok(res) = thread.join() {
-            match res {
-                Ok(p) => survivors.push(p),
-                Err(e) => e.display()
-            }
-        }
-    }
-
-    survivors
 }

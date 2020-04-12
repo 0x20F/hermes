@@ -1,11 +1,11 @@
 [scripts]
-test = "echo 'lalalala'"
+test = { script = "echo 'Current dir: { directory }, File: { file }, Name: { name }'" }
+
 
 [packages.pathogen]
 directory = "autoload"
 filename = "pathogen.vim"
 remote = "https://raw.githubusercontent.com/tpope/vim-pathogen/master/autoload/pathogen.vim"
-
 
 [packages.oh-my-zsh]
 directory = "bundle/oh-my-zsh"

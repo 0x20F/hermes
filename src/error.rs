@@ -8,7 +8,6 @@ pub enum Error {
     Remote,
     Config,
     Save,
-    NoScripts
 }
 
 
@@ -16,7 +15,6 @@ impl Error {
     pub fn display(&self) {
         let message = match *self {
             Error::Clone => "when cloning a repository",
-            Error::NoScripts => "you have no defined scripts in your config",
             _ => ""
         };
 
