@@ -14,6 +14,7 @@ const DEFAULT_FILENAME: &str = "no_name_provided";
 
 
 
+
 #[derive(Clone, Debug, Deserialize)]
 pub struct Package {
     github: Option<Github>,

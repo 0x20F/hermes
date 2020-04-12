@@ -5,6 +5,7 @@ use std::path::Path;
 
 
 
+
 pub fn clone(url: &str, out: &str) -> Result<(), Error> {
     println!("\tCloning repo");
 

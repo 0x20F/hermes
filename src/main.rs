@@ -9,6 +9,8 @@ use paris::formatter::colorize_string;
 use config::Config;
 
 
+
+
 fn main() -> Result<(), String> {
 
     let yaml = load_yaml!("app.yml");
@@ -27,7 +29,7 @@ fn main() -> Result<(), String> {
     let config = get_config(matches)?;
 
     let packages = config.build_packages(matches.is_present("fresh"));
-    config.execute_scripts(&packages);
+    config.execute_scripts(packages);
 
     Ok(())
 }

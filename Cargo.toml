@@ -12,7 +12,7 @@ git2 = "0.13"
 key-list = "1"
 shells = "0.2"
 remove_dir_all = "0.5"
-serde = { version = "1.0.102", features = [ "derive" ] }
+serde = { version = "1.0.102", features = [ "derive", "rc" ] }
 reqwest = { version = "0.10", features = [ "blocking" ] }
 paris = { version = "1.4", features = [ "macros", "no_logger" ] }
 clap = { git = "https://github.com/clap-rs/clap/", features = [ "yaml" ]}

@@ -2,6 +2,8 @@ use std::fs;
 use remove_dir_all::*;
 
 
+
+
 /// Recursively remove directories
 pub fn remove_dir(dir: &str) {
     let _ = remove_dir_all(dir);

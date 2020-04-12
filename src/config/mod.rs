@@ -10,11 +10,14 @@ use crate::error::Error;
 pub use package::Package;
 use std::collections::HashMap;
 use std::thread;
+use std::sync::Arc;
+
+
 
 
 #[derive(Default, Debug, Deserialize)]
 pub struct Config {
-    pub packages: HashMap<String, Package>,
+    pub packages: HashMap<String, Arc<Package>>,
     pub scripts: Option<HashMap<String, Script>>
 }
 
@@ -38,14 +41,16 @@ impl Config {
     }
 
 
-    pub fn build_packages(&self, fresh: bool) -> Vec<Package> {
+    pub fn build_packages(&self, fresh: bool) -> Vec<Arc<Package>> {
         let mut threads = vec![];
         let mut survivors = vec![];
 
-        for (name, mut package) in self.packages.clone() {
-            threads.push(thread::spawn(move || {
-                package.give(name.to_owned());
+        for (name, package) in &self.packages {
+            let package = package.clone();
 
+            println!("Package being built is at: {:p} {}", package, name);
+
+            threads.push(thread::spawn(move || {
                 // If it's not an error, give back the
                 // package so others can use it
                 match package.build(fresh) {
@@ -70,7 +75,7 @@ impl Config {
     }
 
 
-    pub fn execute_scripts(&self, packages: &[Package]) {
+    pub fn execute_scripts(&self, packages: Vec<Arc<Package>>) {
         if let None = self.scripts {
             return;
         }
@@ -78,6 +83,7 @@ impl Config {
         let scripts = self.scripts.as_ref().unwrap();
 
         for package in packages {
+            println!("{:p}", package);
             package.exec(scripts);
         }
     }
