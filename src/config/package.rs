@@ -4,7 +4,6 @@ use crate::download::{ git, remote };
 use crate::config::Config;
 use super::github::Github;
 use crate::tree;
-use crate::event_output::Type;
 
 use std::sync::Arc;
 use crate::error::Error;
