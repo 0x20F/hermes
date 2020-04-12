@@ -32,7 +32,7 @@ impl Script {
             match clean.trim() {
                 "directory" => res = res.replace(&key, &package.full_path()),
                 "file" => res = res.replace(&key, &package.filename()),
-                "name" => res = res.replace(&key, &package.name),
+                "name" => res = res.replace(&key, &package.get_name()),
 
                 _ => () // Key shouldn't be replaced if not defined
             }

@@ -30,14 +30,10 @@ impl Config {
             return Err(Error::Config);
         }
 
-        // Handle toml failing because it can't find required values?
-        let res = toml::from_str::<Config>(&file.unwrap());
-
-        if res.is_err() {
-            return Err(Error::Config);
+        match toml::from_str::<Config>(&file.unwrap()) {
+            Ok(config) => Ok(config),
+            Err(_) => return Err(Error::Config)
         }
-
-        Ok(res.unwrap())
     }
 
 
@@ -76,7 +72,7 @@ impl Config {
 
 
     pub fn execute_scripts(&self, packages: Vec<Arc<Package>>) {
-        if let None = self.scripts {
+        if self.scripts.is_none() {
             return;
         }
 

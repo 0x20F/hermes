@@ -27,12 +27,17 @@ pub struct Package {
 
 
     #[serde(skip_deserializing)]
-    pub name: String
+    name: String
 }
 
 
 
 impl Package {
+    pub fn get_name(&self) -> &String {
+        &self.name
+    }
+
+
     pub fn build(&self, fresh: bool) -> Result<(), Error> {
         let output_dir = &self.directory();
 
