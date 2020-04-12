@@ -42,12 +42,10 @@ impl Type<'_> {
     }
 
     fn get_message(&self) -> &str {
-        let message: &str = match *self {
+        match *self {
             Type::Clone(value) => value,
             Type::Done(value) => value,
             Type::Error(value) => value
-        };
-
-        message
+        }
     }
 }
