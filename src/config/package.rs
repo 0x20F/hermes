@@ -33,19 +33,6 @@ pub struct Package {
 
 
 impl Package {
-    pub fn give(&mut self, name: String) {
-        self.name = name;
-    }
-
-
-    pub fn has_exec(&self) -> bool {
-        match self.exec {
-            Some(_) => true,
-            _ => false
-        }
-    }
-
-
     pub fn build(&self, fresh: bool) -> Result<(), Error> {
         let output_dir = &self.directory();
 
