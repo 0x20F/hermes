@@ -2,11 +2,13 @@ mod tree;
 mod error;
 mod config;
 mod download;
+mod event_output;
 
 use clap::{ App, ArgMatches, load_yaml };
 use paris::formatter::colorize_string;
 
 use config::Config;
+use event_output::Type;
 
 
 
@@ -28,6 +30,8 @@ fn main() -> Result<(), String> {
     let matches = matches.subcommand_matches("cover").unwrap();
     let config = get_config(matches)?;
 
+    let format_message: String = format!("found {} packages", config.packages.len());
+    Type::Clone(&format_message).show();
     let packages = config.build_packages(matches.is_present("fresh"));
     config.execute_scripts(packages);
 
