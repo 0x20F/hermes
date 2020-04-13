@@ -21,7 +21,7 @@ impl Type<'_> {
         let event_info = self.get_event_info().unwrap();
         let message: &str = self.get_message();
 
-        let formated_message: String = format!("<{}>[{}]:</> {}", 
+        let formated_message = format!("<{}>[{}]:</> {}", 
             event_info.color,
             event_info.text.to_uppercase(),
             message
