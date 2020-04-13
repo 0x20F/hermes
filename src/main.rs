@@ -31,7 +31,7 @@ fn main() -> Result<(), String> {
     let config = get_config(matches)?;
 
     let format_message: String = format!("found {} packages", config.packages.len());
-    Type::Clone(format_message.as_str()).show();
+    Type::Clone(&format_message).show();
     let packages = config.build_packages(matches.is_present("fresh"));
     config.execute_scripts(packages);
 
