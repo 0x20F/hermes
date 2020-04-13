@@ -19,7 +19,7 @@ pub enum Type<'a> {
 impl Type<'_> {
     pub fn show(&self) {
         let event_info = self.get_event_info().unwrap();
-        let message: &str = self.get_message();
+        let message = self.get_message();
 
         let formated_message = format!("<{}>[{}]:</> {}", 
             event_info.color,
