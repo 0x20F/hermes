@@ -21,13 +21,13 @@ impl Type<'_> {
         let event_info = self.get_event_info().unwrap();
         let message = self.get_message();
 
-        let formated_message = format!("<{}>[{}]:</> {}", 
+        let formatted_message = format!("<{}>{}</>: {}",
             event_info.color,
             event_info.text.to_uppercase(),
             message
         );
 
-        log!("{}", formated_message);
+        log!("{}", formatted_message);
     }
 
 
