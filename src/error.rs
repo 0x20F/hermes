@@ -1,4 +1,4 @@
-use crate::event_output::Type;
+use crate::event_output::{Type, Out};
 
 
 
@@ -18,6 +18,6 @@ impl Error {
             _ => ""
         };
 
-        Type::Error(message).show();
+        Out::write(Type::Error, message);
     }
 }

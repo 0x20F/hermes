@@ -9,8 +9,7 @@ use paris::formatter::colorize_string;
 
 use config::Config;
 use event_output::Type;
-
-
+use crate::event_output::Out;
 
 
 fn main() -> Result<(), String> {
@@ -30,8 +29,8 @@ fn main() -> Result<(), String> {
     let matches = matches.subcommand_matches("cover").unwrap();
     let config = get_config(matches)?;
 
-    let format_message: String = format!("found {} packages", config.packages.len());
-    Type::Clone(&format_message).show();
+    Out::write(Type::Clone, &format!("{} packages", config.packages.len()));
+
     let packages = config.build_packages(matches.is_present("fresh"));
     config.execute_scripts(packages);
 

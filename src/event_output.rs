@@ -6,42 +6,37 @@ pub struct Event<'a> {
     pub text: &'a str
 }
 
-pub enum Type<'a> {
-    Clone(&'a str),
-    Done(&'a str),
-    Error(&'a str)
+pub enum Type {
+    Clone,
+    Done,
+    Error
 }
 
-impl Type<'_> {
-    pub fn show(&self) {
-        let event_info = self.get_event_info().unwrap();
-        let message = self.get_message();
+impl Type {
+    pub fn text(&self) -> String {
+        let event_info = self.get_event_info();
 
-        let formatted_message = format!("<{}>{}</>: {}",
+        format!("<{}>{}</>:",
             event_info.color,
-            event_info.text,
-            message
-        );
-
-        log!("{}", formatted_message);
+            event_info.text
+        )
     }
 
 
-    fn get_event_info(&self) -> Option<Event> {
-        let info = match *self {
-            Type::Clone(_) => Event { color: "cyan", text: "Cloning" },
-            Type::Done(_) => Event { color: "bright green", text: "Done" },
-            Type::Error(_) => Event { color: "bright red", text: "Error" },
-        };
-
-        Some(info)
-    }
-
-    fn get_message(&self) -> &str {
+    fn get_event_info(&self) -> Event {
         match *self {
-            Type::Clone(value) => value,
-            Type::Done(value) => value,
-            Type::Error(value) => value
+            Type::Clone => Event { color: "cyan", text: "Cloning" },
+            Type::Done => Event { color: "bright green", text: "Done" },
+            Type::Error => Event { color: "bright red", text: "Error" },
         }
+    }
+}
+
+
+pub struct Out {}
+
+impl Out {
+    pub fn write(event: Type, message: &str) {
+        log!("{} {}", event.text(), message);
     }
 }
