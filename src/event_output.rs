@@ -33,9 +33,9 @@ impl Type<'_> {
 
     fn get_event_info(&self) -> Option<Event> {
         let info = match *self {
-            Type::Clone(_) => Event { color: EVENT_CLONE, text: "clone" },
-            Type::Done(_) => Event { color: EVENT_DONE, text: "done" },
-            Type::Error(_) => Event { color: EVENT_ERROR, text: "error" },
+            Type::Clone(_) => Event { color: EVENT_CLONE, text: "Cloning" },
+            Type::Done(_) => Event { color: EVENT_DONE, text: "Done" },
+            Type::Error(_) => Event { color: EVENT_ERROR, text: "Error" },
         };
 
         Some(info)
