@@ -1,9 +1,5 @@
 use paris::{ log };
 
-const EVENT_DONE: &str = "bright green";
-const EVENT_CLONE: &str = "cyan";
-const EVENT_ERROR: &str = "bright red";
-
 
 pub struct Event<'a> {
     pub color: &'a str,
@@ -33,9 +29,9 @@ impl Type<'_> {
 
     fn get_event_info(&self) -> Option<Event> {
         let info = match *self {
-            Type::Clone(_) => Event { color: EVENT_CLONE, text: "Cloning" },
-            Type::Done(_) => Event { color: EVENT_DONE, text: "Done" },
-            Type::Error(_) => Event { color: EVENT_ERROR, text: "Error" },
+            Type::Clone(_) => Event { color: "cyan", text: "Cloning" },
+            Type::Done(_) => Event { color: "bright green", text: "Done" },
+            Type::Error(_) => Event { color: "bright red", text: "Error" },
         };
 
         Some(info)
