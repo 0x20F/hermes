@@ -23,7 +23,7 @@ impl Type<'_> {
 
         let formatted_message = format!("<{}>{}</>: {}",
             event_info.color,
-            event_info.text.to_uppercase(),
+            event_info.text,
             message
         );
 
