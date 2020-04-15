@@ -1,4 +1,4 @@
-use crate::event_output::{Type, Out};
+use crate::output::{Type, Out};
 
 
 

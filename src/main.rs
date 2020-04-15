@@ -2,14 +2,14 @@ mod tree;
 mod error;
 mod config;
 mod download;
-mod event_output;
+mod output;
 
 use clap::{ App, ArgMatches, load_yaml };
 use paris::formatter::colorize_string;
 
+use crate::output::{Type, Out };
 use config::Config;
-use event_output::Type;
-use crate::event_output::Out;
+
 
 
 fn main() -> Result<(), String> {

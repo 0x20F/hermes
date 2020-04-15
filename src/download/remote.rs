@@ -1,7 +1,7 @@
 use reqwest::blocking;
 use crate::error::Error;
 use crate::tree::create_file;
-use crate::event_output::{Type, Out};
+use crate::output::{Type, Out};
 
 
 pub fn get(url: &str, out: &str, filename: &str) -> Result<(), Error> {
