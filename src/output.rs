@@ -16,7 +16,7 @@ impl Type {
     pub fn text(&self) -> String {
         let event_info = self.get_event_info();
 
-        format!("<{}>{}</>:",
+        format!("<{}>{}</>",
             event_info.color,
             event_info.text
         )
