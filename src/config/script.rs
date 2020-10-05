@@ -14,7 +14,7 @@ pub struct Script {
 
 impl Script {
     pub fn exec(&self, package: &Package) {
-        log!("<magenta>Running</> script");
+        log!("<bright blue>Running</> script {}", self.script);
 
         let (_, stdout, _) = execute_with("sh", &self.prepare_script(package));
         println!("{}", stdout);

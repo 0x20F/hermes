@@ -1,6 +1,6 @@
 use reqwest::blocking;
 use crate::tree::create_file;
-use paris::{ info };
+use paris::{ log };
 
 
 pub fn get(url: &str, out: &str, filename: &str) -> Result<(), &'static str> {
@@ -21,7 +21,7 @@ pub fn get(url: &str, out: &str, filename: &str) -> Result<(), &'static str> {
         return Err("Could not save to the given file"); // TODO: Better message
     }
 
-    info!("<magenta>Done</> downloading {}", url);
+    log!("<magenta>Done</> downloading {}", url);
 
     Ok(())
 }

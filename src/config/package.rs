@@ -1,8 +1,9 @@
 use serde::{Deserialize};
 
 use crate::download::{ git, remote };
-use super::github::Github;
+use super::git::Git;
 use crate::tree;
+use paris::{ log };
 
 use crate::config::script::Script;
 use std::collections::HashMap;
@@ -16,11 +17,12 @@ const DEFAULT_FILENAME: &str = "no_name_provided";
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct Package {
-    github: Option<Github>,
+    // TODO: One or the other, either git or remote
+    git: Option<Git>,
     remote: Option<String>,
 
-    directory: Option<String>,
-    filename: Option<String>,
+    directory: Option<String>, // TODO: Make non optional
+    filename: Option<String>, // TODO: Make non optional?
 
     exec: Option<Vec<String>>,
 
@@ -45,9 +47,9 @@ impl Package {
         }
         tree::create_dir(output_dir);
 
-        println!("Building package");
+        log!("<bright green>Building</> {}", self.get_name());
 
-        if let Some(repo) = &self.github {
+        if let Some(repo) = &self.git {
             return git::clone(&repo.url(), output_dir);
         }
 

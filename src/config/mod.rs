@@ -1,4 +1,4 @@
-mod github;
+mod git;
 mod package;
 mod script;
 
@@ -41,10 +41,10 @@ impl Config {
         let mut threads = vec![];
         let mut survivors = vec![];
 
-        for (name, package) in &self.packages {
-            let package = package.clone();
-
-            println!("Package being built is at: {:p} {}", package, name);
+        // For every package
+        for (_, package) in &self.packages {
+            let package = package.clone(); // Clone for threading
+            let fresh = fresh.clone();
 
             threads.push(thread::spawn(move || {
                 // If it's not an error, give back the
@@ -58,11 +58,11 @@ impl Config {
 
         // Wait for all threads to finish before exiting
         for thread in threads {
-            // If thread didn't die, display error or save package
+            // If thread didn't die, save package otherwise display error
             if let Ok(res) = thread.join() {
                 match res {
                     Ok(p) => survivors.push(p),
-                    Err(e) => error!("{}", e)
+                    Err(_) => error!("Could not build package")
                 }
             }
         }

@@ -19,15 +19,15 @@ fn main() -> Result<(), &'static str> {
         return Ok(());
     }
 
-
-    let matches = matches.subcommand_matches("cover").unwrap();
-    let config = get_config(matches)?;
+    let args = matches.subcommand_matches("cover").unwrap();
+    let config = get_config(args)?;
 
     info!("<bright green>Cloning</> {} packages", config.packages.len());
 
-    let packages = config.build_packages(matches.is_present("fresh"));
-    config.execute_scripts(packages);
+    let fresh = args.is_present("fresh");
+    let packages = config.build_packages(fresh);
 
+    config.execute_scripts(packages);
     Ok(())
 }
 

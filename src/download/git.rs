@@ -1,6 +1,6 @@
 use git2::Repository;
 use std::path::Path;
-use paris::{ info };
+use paris::{ log };
 
 
 pub fn clone(url: &str, out: &str) -> Result<(), &'static str> {
@@ -13,7 +13,7 @@ pub fn clone(url: &str, out: &str) -> Result<(), &'static str> {
         }
     };
 
-    info!("<magenta>Done</>: downloading {}", url);
+    log!("<magenta>Done</> downloading {}", url);
 
     Ok(())
 }
