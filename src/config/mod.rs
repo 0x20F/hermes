@@ -6,11 +6,11 @@ use std::fs::read_to_string;
 use serde::{ Deserialize };
 
 use script::Script;
-use crate::error::Error;
 pub use package::Package;
 use std::collections::HashMap;
 use std::thread;
 use std::sync::Arc;
+use paris::{ error };
 
 
 
@@ -23,16 +23,16 @@ pub struct Config {
 
 
 impl Config {
-    pub fn from(path: &str) -> Result<Config, Error> {
+    pub fn from(path: &str) -> Result<Config, &'static str> {
         let file = read_to_string(path);
 
         if file.is_err() {
-            return Err(Error::Config);
+            return Err("Could not find the given configuration file"); // TODO: Better message
         }
 
         match toml::from_str::<Config>(&file.unwrap()) {
             Ok(config) => Ok(config),
-            Err(_) => return Err(Error::Config)
+            Err(_) => return Err("Could not parse the config file") // TODO: Better message
         }
     }
 
@@ -62,7 +62,7 @@ impl Config {
             if let Ok(res) = thread.join() {
                 match res {
                     Ok(p) => survivors.push(p),
-                    Err(e) => e.display()
+                    Err(e) => error!("{}", e)
                 }
             }
         }

@@ -1,19 +1,16 @@
 mod tree;
-mod error;
 mod config;
 mod download;
-mod output;
 
 use clap::{ App, ArgMatches, load_yaml };
 use paris::formatter::colorize_string;
 use paris::{ log, error, info };
 
-use crate::output::{Type, Out };
 use config::Config;
 
 
 
-fn main() -> Result<(), String> {
+fn main() -> Result<(), &'static str> {
     let yaml = load_yaml!("app.yml");
     let matches = App::from(yaml).get_matches();
 
@@ -39,7 +36,7 @@ fn main() -> Result<(), String> {
 
 /// Get the config file, if no parameter is passed it'll
 /// choose the default
-fn get_config(matches: &ArgMatches) -> Result<Config, String> {
+fn get_config(matches: &ArgMatches) -> Result<Config, &'static str> {
     let mut path = "packages.toml";
 
     if matches.is_present("config") {
@@ -48,6 +45,6 @@ fn get_config(matches: &ArgMatches) -> Result<Config, String> {
 
     match Config::from(path) {
         Ok(config) => Ok(config),
-        Err(_) => Err(String::new())
+        Err(e) => Err(e)
     }
 }

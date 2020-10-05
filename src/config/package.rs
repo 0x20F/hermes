@@ -4,7 +4,6 @@ use crate::download::{ git, remote };
 use super::github::Github;
 use crate::tree;
 
-use crate::error::Error;
 use crate::config::script::Script;
 use std::collections::HashMap;
 
@@ -38,7 +37,7 @@ impl Package {
     }
 
 
-    pub fn build(&self, fresh: bool) -> Result<(), Error> {
+    pub fn build(&self, fresh: bool) -> Result<(), &'static str> {
         let output_dir = &self.directory();
 
         if fresh {
@@ -63,7 +62,7 @@ impl Package {
     }
 
 
-    pub fn exec(&self, scripts: &HashMap<String, Script>) -> Result<(), Error> {
+    pub fn exec(&self, scripts: &HashMap<String, Script>) -> Result<(), &'static str> {
         let names = match self.exec.as_ref() {
             Some(vec) => vec,
             None => return Ok(())

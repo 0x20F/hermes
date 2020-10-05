@@ -1,14 +1,13 @@
 use reqwest::blocking;
-use crate::error::Error;
 use crate::tree::create_file;
-use crate::output::{Type, Out};
+use paris::{ info };
 
 
-pub fn get(url: &str, out: &str, filename: &str) -> Result<(), Error> {
+pub fn get(url: &str, out: &str, filename: &str) -> Result<(), &'static str> {
     let response = match blocking::get(url) {
         Ok(resp) => resp,
         Err(_) => {
-            return Err(Error::Remote);
+            return Err("Could not retrieve the given file"); // TODO: Better message
         }
     };
 
@@ -19,10 +18,10 @@ pub fn get(url: &str, out: &str, filename: &str) -> Result<(), Error> {
         create_file(&output_dir, &text);
     } else {
         // Saving failed
-        return Err(Error::Save);
+        return Err("Could not save to the given file"); // TODO: Better message
     }
 
-    Out::write(Type::Done, &format!("downloading {}", filename));
+    info!("<magenta>Done</> downloading {}", url);
 
     Ok(())
 }
