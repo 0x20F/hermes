@@ -29,12 +29,12 @@ impl Script {
         for key in keys {
             let clean = key.replace(&['{', '}'][..], "");
 
-            match clean.trim() {
-                "directory" => res = res.replace(&key, &package.full_path()),
-                "file" => res = res.replace(&key, &package.filename()),
-                "name" => res = res.replace(&key, &package.get_name()),
+            res = match clean.trim() {
+                "directory" => res.replace(&key, &package.full_path()),
+                "file" => res.replace(&key, &package.filename()),
+                "name" => res.replace(&key, &package.get_name()),
 
-                _ => () // Key shouldn't be replaced if not defined
+                _ => res // Key shouldn't be replaced if not defined
             }
         }
 
