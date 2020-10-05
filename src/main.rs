@@ -2,6 +2,7 @@ mod tree;
 mod config;
 mod download;
 mod output;
+mod inject;
 
 use clap::{ App, ArgMatches, load_yaml };
 use paris::formatter::colorize_string;

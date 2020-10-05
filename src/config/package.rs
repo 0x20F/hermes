@@ -3,6 +3,8 @@ use serde::{Deserialize};
 use crate::download::{ git, remote };
 use super::git::Git;
 use crate::tree;
+use crate::inject::Dependency;
+use std::sync::Arc;
 use paris::{ log };
 
 use crate::config::script::Script;
@@ -16,7 +18,7 @@ const DEFAULT_FILENAME: &str = "no_name_provided";
 
 
 #[derive(Clone, Debug, Deserialize)]
-pub struct Package {
+pub struct Package<'a> {
     // TODO: One or the other, either git or remote
     git: Option<Git>,
     remote: Option<String>,
@@ -28,12 +30,14 @@ pub struct Package {
 
 
     #[serde(skip_deserializing)]
-    name: String
+    name: String,
+    #[serde(skip_deserializing)]
+    dependencies: Vec<Arc<Box<&'a Dependency>>>
 }
 
 
 
-impl Package {
+impl<'a> Package<'a> {
     pub fn get_name(&self) -> &String {
         &self.name
     }

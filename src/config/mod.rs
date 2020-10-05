@@ -16,13 +16,13 @@ use paris::{ error };
 
 
 #[derive(Default, Debug, Deserialize)]
-pub struct Config {
-    pub packages: HashMap<String, Arc<Package>>,
+pub struct Config<'a> {
+    pub packages: HashMap<String, Arc<Package<'a>>>,
     pub scripts: Option<HashMap<String, Script>>
 }
 
 
-impl Config {
+impl<'a> Config<'a> {
     pub fn from(path: &str) -> Result<Config, &'static str> {
         let file = read_to_string(path);
 
@@ -38,8 +38,7 @@ impl Config {
 
 
     pub fn build_packages(&self, fresh: bool) -> Vec<Arc<Package>> {
-        let mut threads = vec![];
-        let mut survivors = vec![];
+        let (mut threads, mut survivors) = (vec![], vec![]);
 
         // For every package
         for (_, package) in &self.packages {
