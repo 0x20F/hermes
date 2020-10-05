@@ -1,4 +1,4 @@
-use paris::{ log };
+use paris::{ log, error };
 
 
 pub struct Event<'a> {

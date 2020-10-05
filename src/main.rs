@@ -6,6 +6,7 @@ mod output;
 
 use clap::{ App, ArgMatches, load_yaml };
 use paris::formatter::colorize_string;
+use paris::{ log, error, info };
 
 use crate::output::{Type, Out };
 use config::Config;
@@ -13,23 +14,19 @@ use config::Config;
 
 
 fn main() -> Result<(), String> {
-
     let yaml = load_yaml!("app.yml");
     let matches = App::from(yaml).get_matches();
 
     if !matches.is_present("cover") {
-        let message = colorize_string(
-            "You need to use the <bright blue>cover</> command"
-        );
-
-        return Err(message);
+        error!("You need to use the <bright blue>cover</> command");
+        return Ok(());
     }
 
 
     let matches = matches.subcommand_matches("cover").unwrap();
     let config = get_config(matches)?;
 
-    Out::write(Type::Clone, &format!("{} packages", config.packages.len()));
+    info!("<bright green>Cloning</> {} packages", config.packages.len());
 
     let packages = config.build_packages(matches.is_present("fresh"));
     config.execute_scripts(packages);
@@ -51,6 +48,6 @@ fn get_config(matches: &ArgMatches) -> Result<Config, String> {
 
     match Config::from(path) {
         Ok(config) => Ok(config),
-        Err(_) => Err(colorize_string("<bright red>Failed to read config</>"))
+        Err(_) => Err(String::new())
     }
 }
