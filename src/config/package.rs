@@ -18,7 +18,7 @@ const DEFAULT_FILENAME: &str = "no_name_provided";
 
 
 #[derive(Clone, Debug, Deserialize)]
-pub struct Package<'a> {
+pub struct Package {
     // TODO: One or the other, either git or remote
     git: Option<Git>,
     remote: Option<String>,
@@ -30,14 +30,12 @@ pub struct Package<'a> {
 
 
     #[serde(skip_deserializing)]
-    name: String,
-    #[serde(skip_deserializing)]
-    dependencies: Vec<Arc<Box<&'a Dependency>>>
+    name: String
 }
 
 
 
-impl<'a> Package<'a> {
+impl Package {
     pub fn get_name(&self) -> &String {
         &self.name
     }

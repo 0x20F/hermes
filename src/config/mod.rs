@@ -16,13 +16,13 @@ use paris::{ error };
 
 
 #[derive(Default, Debug, Deserialize)]
-pub struct Config<'a> {
-    pub packages: HashMap<String, Arc<Package<'a>>>,
+pub struct Config {
+    pub packages: HashMap<String, Arc<Package>>,
     pub scripts: Option<HashMap<String, Script>>
 }
 
 
-impl<'a> Config<'a> {
+impl Config {
     pub fn from(path: &str) -> Result<Config, &'static str> {
         let file = read_to_string(path);
 
