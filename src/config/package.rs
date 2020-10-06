@@ -22,8 +22,8 @@ pub struct Package {
     git: Option<Git>,
     remote: Option<String>,
 
-    directory: Option<String>, // TODO: Make non optional
-    filename: Option<String>, // TODO: Make non optional?
+    directory: Option<String>, // TODO: Directory only for entire repos
+    filename: Option<String>, // TODO: Filename only for raw file downloads
 
     exec: Option<Vec<String>>,
 
