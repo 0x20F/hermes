@@ -3,7 +3,6 @@ use serde::{Deserialize};
 use crate::download::{ git, remote };
 use super::git::Git;
 use crate::tree;
-use crate::inject::Dependency;
 use std::sync::Arc;
 use paris::{ log };
 
