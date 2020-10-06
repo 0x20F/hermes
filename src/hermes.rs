@@ -2,9 +2,7 @@ use clap::{ App, ArgMatches, load_yaml };
 use paris::{ log };
 
 use super::config::Config;
-
-
-
+use std::fs::read_to_string;
 
 
 pub fn run() -> Result<(), &'static str> {
@@ -16,7 +14,7 @@ pub fn run() -> Result<(), &'static str> {
     }
 
     let args = matches.subcommand_matches("cover").unwrap();
-    let mut config = get_config(args)?;
+    let mut config = load_config(args)?;
 
     log!("<bright green>Cloning</> {} packages", config.packages.len());
 
@@ -34,15 +32,27 @@ pub fn run() -> Result<(), &'static str> {
 
 /// Get the config file, if no parameter is passed it'll
 /// choose the default
-fn get_config(matches: &ArgMatches) -> Result<Config, &'static str> {
+fn find_config(matches: &ArgMatches) -> String {
     let mut path = "packages.toml";
 
     if matches.is_present("config") {
         path = matches.value_of("config").unwrap()
     }
 
-    match Config::from(path) {
-        Ok(config) => Ok(config),
-        Err(e) => Err(e)
+    path.to_string()
+}
+
+
+fn load_config(matches: &ArgMatches) -> Result<Config, &'static str> {
+    let path = find_config(matches);
+    let file = read_to_string(path);
+
+    if file.is_err() {
+        return Err("Could not find the given configuration file"); // TODO: Better message
+    }
+
+    match toml::from_str::<Config>(&file.unwrap()) {
+        Ok(c) => Ok(c),
+        Err(_) => Err("Could not parse the config file") // TODO: Better message
     }
 }

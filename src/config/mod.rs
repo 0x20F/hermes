@@ -23,20 +23,6 @@ pub struct Config {
 
 
 impl Config {
-    pub fn from(path: &str) -> Result<Config, &'static str> {
-        let file = read_to_string(path);
-
-        if file.is_err() {
-            return Err("Could not find the given configuration file"); // TODO: Better message
-        }
-
-        match toml::from_str::<Config>(&file.unwrap()) {
-            Ok(config) => Ok(config),
-            Err(_) => return Err("Could not parse the config file") // TODO: Better message
-        }
-    }
-
-
     pub fn build_packages(&mut self, fresh: bool) -> Result<&Self, &'static str> {
         let mut threads = vec![];
 
