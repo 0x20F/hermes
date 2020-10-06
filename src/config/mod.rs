@@ -37,7 +37,7 @@ impl Config {
     }
 
 
-    pub fn build_packages(&mut self, fresh: bool) -> &HashMap<String, Arc<Package>> {
+    pub fn build_packages(&mut self, fresh: bool) -> Result<&Self, &'static str> {
         let mut threads = vec![];
 
         // For every package
@@ -58,7 +58,8 @@ impl Config {
         }
 
         Self::wait_for_threads(threads, &mut self.packages);
-        &self.packages
+
+        Ok(self)
     }
 
 

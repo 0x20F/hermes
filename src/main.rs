@@ -27,8 +27,9 @@ fn main() -> Result<(), &'static str> {
 
     let fresh = args.is_present("fresh");
 
-    config.build_packages(fresh);
-    config.execute_scripts();
+    config
+        .build_packages(fresh)?
+        .execute_scripts();
 
     Ok(())
 }
