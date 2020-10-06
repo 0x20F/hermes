@@ -78,14 +78,14 @@ impl Config {
     }
 
 
-    pub fn execute_scripts(&self, packages: Vec<Arc<Package>>) {
+    pub fn execute_scripts(&self) {
         if self.scripts.is_none() {
             return;
         }
 
         let scripts = self.scripts.as_ref().unwrap();
 
-        for package in packages {
+        for (_, package) in &self.packages {
             println!("{:p}", package);
             package.exec(scripts);
         }

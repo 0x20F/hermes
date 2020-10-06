@@ -26,9 +26,10 @@ fn main() -> Result<(), &'static str> {
     info!("<bright green>Cloning</> {} packages", config.packages.len());
 
     let fresh = args.is_present("fresh");
-    let packages = config.build_packages(fresh);
 
-    //config.execute_scripts(packages);
+    config.build_packages(fresh);
+    config.execute_scripts();
+
     Ok(())
 }
 
