@@ -43,22 +43,18 @@ impl Package {
     pub fn build(&self, fresh: bool) -> Result<(), &'static str> {
         let output_dir = &self.directory();
 
-        if fresh {
-            tree::remove_dir(output_dir);
-        }
-        tree::create_dir(output_dir);
+        Package::clean(output_dir, fresh);
+
 
         log!("<bright green>Building</> {}", self.get_name());
 
+
         if let Some(repo) = &self.git {
-            return git::clone(&repo.url(), output_dir);
+            git::clone(&repo.url(), output_dir)?;
         }
 
-
-        let output_file = &self.filename();
-
         if let Some(url) = &self.remote {
-            return remote::get(url, output_dir, output_file);
+            remote::get(url, output_dir, &self.filename())?;
         }
 
         Ok(())
@@ -66,13 +62,8 @@ impl Package {
 
 
     pub fn exec(&self, scripts: &HashMap<String, Script>) -> Result<(), &'static str> {
-        let names = match self.exec.as_ref() {
-            Some(vec) => vec,
-            None => return Ok(())
-        };
-
-        for name in names {
-            let script = scripts.get(name).unwrap();
+        for name in self.scripts() {
+            let script = scripts.get(&name).unwrap();
 
             script.exec(self);
         }
@@ -101,5 +92,22 @@ impl Package {
 
     pub fn full_path(&self) -> String {
         format!("{}/{}", tree::current_dir(), self.directory())
+    }
+
+
+    fn scripts(&self) -> Vec<String> {
+        match self.exec.as_ref() {
+            Some(v) => v.clone(),
+            None => vec![]
+        }
+    }
+
+
+    fn clean(what: &str, fresh: bool) {
+        if fresh {
+            tree::remove_dir(what);
+        }
+
+        tree::create_dir(what);
     }
 }

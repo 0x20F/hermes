@@ -11,8 +11,8 @@ use std::collections::HashMap;
 use std::thread;
 use std::sync::Arc;
 use paris::{ error };
-
-
+use std::thread::JoinHandle;
+use git2::ResetType;
 
 
 #[derive(Default, Debug, Deserialize)]
@@ -37,36 +37,44 @@ impl Config {
     }
 
 
-    pub fn build_packages(&self, fresh: bool) -> Vec<Arc<Package>> {
-        let (mut threads, mut survivors) = (vec![], vec![]);
+    pub fn build_packages(&mut self, fresh: bool) -> &HashMap<String, Arc<Package>> {
+        let mut threads = vec![];
 
         // For every package
-        for (_, package) in &self.packages {
+        for (name, package) in &self.packages {
             let package = package.clone(); // Clone for threading
             let fresh = fresh.clone();
+            let name = name.clone();
 
             threads.push(thread::spawn(move || {
                 // If it's not an error, give back the
                 // package so others can use it
-                match package.build(fresh) {
-                    Ok(_) => Ok(package),
-                    Err(e) => Err(e)
+                if let Err(_) = package.build(fresh) {
+                    return Err(name);
                 }
+
+                Ok(())
             }));
         }
 
+        Self::wait_for_threads(threads, &mut self.packages);
+        &self.packages
+    }
+
+
+    pub fn wait_for_threads(
+        threads: Vec<JoinHandle<Result<(), String>>>,
+        packages: &mut HashMap<String, Arc<Package>>
+    ) {
         // Wait for all threads to finish before exiting
         for thread in threads {
-            // If thread didn't die, save package otherwise display error
-            if let Ok(res) = thread.join() {
-                match res {
-                    Ok(p) => survivors.push(p),
-                    Err(_) => error!("Could not build package")
-                }
+            let res = thread.join();
+
+            if let Err(name) = res.unwrap() {
+                error!("Could not build package");
+                packages.remove_entry(&name);
             }
         }
-
-        survivors
     }
 
 
