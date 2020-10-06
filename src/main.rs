@@ -11,13 +11,22 @@ use config::Config;
 
 
 
-fn main() -> Result<(), &'static str> {
+fn main() {
+    match hermes() {
+        Ok(_) => log!("Everything is set up!"),
+        Err(msg) => error!("{}", msg)
+    }
+}
+
+
+
+
+fn hermes() -> Result<(), &'static str> {
     let yaml = load_yaml!("app.yml");
     let matches = App::from(yaml).get_matches();
 
     if !matches.is_present("cover") {
-        error!("You need to use the <bright blue>cover</> command");
-        return Ok(());
+        return Err("You need to use the <bright blue>cover</> command");
     }
 
     let args = matches.subcommand_matches("cover").unwrap();
