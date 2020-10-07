@@ -4,24 +4,25 @@ use paris::{ log };
 
 
 pub fn get(url: &str, out: &str, filename: &str) -> Result<(), &'static str> {
-    let response = match blocking::get(url) {
-        Ok(resp) => resp,
-        Err(_) => {
-            return Err("Could not retrieve the given file"); // TODO: Better message
-        }
-    };
+    let response = blocking::get(url);
+
+    if let Err(_) = response {
+        return Err("Could not retrieve the given file"); // TODO: Better message
+    }
 
 
-    if let Ok(text) = response.text() {
-        // Save to file
-        let output_dir = format!("{}/{}", out, filename);
-        create_file(&output_dir, &text);
-    } else {
-        // Saving failed
+    let text = response.unwrap().text();
+
+    if let Err(_) = text {
         return Err("Could not save to the given file"); // TODO: Better message
     }
 
-    log!("<magenta>Done</> downloading {}", url);
 
+    // Save to file
+    let output_dir = format!("{}/{}", out, filename);
+    create_file(&output_dir, &text.unwrap()); // TODO: Throw an error if saving didn't work
+
+
+    log!("<magenta>Done</> downloading {}", url);
     Ok(())
 }
