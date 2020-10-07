@@ -20,8 +20,7 @@ pub fn run() -> Result<(), &'static str> {
 
     config
         .load_fresh(args.is_present("fresh"))
-        .build_packages()?
-        .execute_scripts();
+        .build_packages()?;
 
     Ok(())
 }

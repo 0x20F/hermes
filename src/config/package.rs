@@ -17,7 +17,7 @@ const DEFAULT_FILENAME: &str = "no_name_provided";
 
 
 #[derive(Clone, Debug, Deserialize)]
-pub struct Package {
+pub struct Package<'a> {
     // TODO: One or the other, either git or remote
     git: Option<Git>,
     remote: Option<String>,
@@ -29,12 +29,15 @@ pub struct Package {
 
 
     #[serde(skip_deserializing)]
-    name: String
+    name: String,
+
+    #[serde(skip_deserializing)]
+    scripts: Option<&'a HashMap<String, Script>>
 }
 
 
 
-impl Package {
+impl<'a> Package<'a> {
     pub fn get_name(&self) -> &String {
         &self.name
     }
@@ -57,14 +60,22 @@ impl Package {
             remote::get(url, output_dir, &self.filename())?;
         }
 
+        // TODO: Execute script directly?
+        self.exec();
+
         Ok(())
     }
 
 
-    pub fn exec(&self, scripts: &HashMap<String, Script>) -> Result<(), &'static str> {
-        for name in self.scripts() {
-            let script = scripts.get(&name).unwrap();
+    pub fn exec(&self) -> Result<(), &'static str> {
+        let scripts = match self.scripts {
+            Some(s) => s,
+            None => return Ok(())
+        };
 
+
+        for name in self.script_keys() {
+            let script = scripts.get(&name).unwrap();
             script.exec(self);
         }
 
@@ -95,7 +106,13 @@ impl Package {
     }
 
 
-    fn scripts(&self) -> Vec<String> {
+    pub fn with_scripts(&mut self, scripts: &'a HashMap<String, Script>) -> &mut Self {
+        self.scripts = Some(scripts);
+        self
+    }
+
+
+    fn script_keys(&self) -> Vec<String> {
         match self.exec.as_ref() {
             Some(v) => v.clone(),
             None => vec![]
