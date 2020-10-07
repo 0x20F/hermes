@@ -15,7 +15,7 @@ use std::thread::JoinHandle;
 
 #[derive(Default, Debug, Deserialize)]
 pub struct Config {
-    pub packages: HashMap<String, Arc<Package>>,
+    pub packages: HashMap<String, Package>,
     pub scripts: Option<HashMap<String, Script>>,
 
     #[serde(skip_deserializing)]
@@ -52,7 +52,7 @@ impl Config {
 
     pub fn wait_for_threads(
         threads: Vec<JoinHandle<Result<(), String>>>,
-        packages: &mut HashMap<String, Arc<Package>>
+        packages: &mut HashMap<String, Package>
     ) {
         // Wait for all threads to finish before exiting
         for thread in threads {
@@ -62,20 +62,6 @@ impl Config {
                 error!("Could not build package");
                 packages.remove_entry(&name);
             }
-        }
-    }
-
-
-    pub fn execute_scripts(&self) {
-        if self.scripts.is_none() {
-            return;
-        }
-
-        let scripts = self.scripts.as_ref().unwrap();
-
-        for (_, package) in &self.packages {
-            println!("{:p}", package);
-            package.exec(scripts);
         }
     }
 

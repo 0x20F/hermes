@@ -17,7 +17,7 @@ const DEFAULT_FILENAME: &str = "no_name_provided";
 
 
 #[derive(Clone, Debug, Deserialize)]
-pub struct Package<'a> {
+pub struct Package {
     // TODO: One or the other, either git or remote
     git: Option<Git>,
     remote: Option<String>,
@@ -32,12 +32,12 @@ pub struct Package<'a> {
     name: String,
 
     #[serde(skip_deserializing)]
-    scripts: Option<&'a HashMap<String, Script>>
+    scripts: Option<Arc<HashMap<String, Script>>>
 }
 
 
 
-impl<'a> Package<'a> {
+impl Package {
     pub fn get_name(&self) -> &String {
         &self.name
     }
@@ -68,7 +68,7 @@ impl<'a> Package<'a> {
 
 
     pub fn exec(&self) -> Result<(), &'static str> {
-        let scripts = match self.scripts {
+        let scripts = match self.scripts.clone() {
             Some(s) => s,
             None => return Ok(())
         };
@@ -106,7 +106,7 @@ impl<'a> Package<'a> {
     }
 
 
-    pub fn with_scripts(&mut self, scripts: &'a HashMap<String, Script>) -> &mut Self {
+    pub fn with_scripts(&mut self, scripts: Arc<HashMap<String, Script>>) -> &mut Self {
         self.scripts = Some(scripts);
         self
     }
