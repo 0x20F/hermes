@@ -12,24 +12,26 @@ use std::thread;
 use std::sync::Arc;
 use paris::{ error };
 use std::thread::JoinHandle;
-use git2::ResetType;
 
 
 #[derive(Default, Debug, Deserialize)]
 pub struct Config {
     pub packages: HashMap<String, Arc<Package>>,
-    pub scripts: Option<HashMap<String, Script>>
+    pub scripts: Option<HashMap<String, Script>>,
+
+    #[serde(skip_deserializing)]
+    pub refresh: bool
 }
 
 
 impl Config {
-    pub fn build_packages(&mut self, fresh: bool) -> Result<&Self, &'static str> {
+    pub fn build_packages(&mut self) -> Result<&Self, &'static str> {
         let mut threads = vec![];
 
         // For every package
         for (name, package) in &self.packages {
             let package = package.clone(); // Clone for threading
-            let fresh = fresh.clone();
+            let fresh = self.refresh.clone();
             let name = name.clone();
 
             threads.push(thread::spawn(move || {
@@ -76,6 +78,12 @@ impl Config {
             println!("{:p}", package);
             package.exec(scripts);
         }
+    }
+
+
+    pub fn load_fresh(&mut self, should: bool) -> &mut Self {
+        self.refresh = should;
+        self
     }
 }
 

@@ -18,10 +18,9 @@ pub fn run() -> Result<(), &'static str> {
 
     log!("<bright green>Cloning</> {} packages", config.packages.len());
 
-    let fresh = args.is_present("fresh");
-
     config
-        .build_packages(fresh)?
+        .load_fresh(args.is_present("fresh"))
+        .build_packages()?
         .execute_scripts();
 
     Ok(())
