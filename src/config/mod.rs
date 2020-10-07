@@ -2,7 +2,6 @@ mod git;
 mod package;
 mod script;
 
-use std::fs::read_to_string;
 use serde::{ Deserialize };
 
 use script::Script;
